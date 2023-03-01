@@ -198,13 +198,9 @@ export default {
             app.globalData.backgroundAudioManager.currentTime = 0
             app.globalData.backgroundAudioManager.duration = 0
         })
-        /* app.globalData.backgroundAudioManager.onSeeking(()=>{
+        /* app.globalData.backgroundAudioManager.onCanplay(()=>{
             this.timeUpdate()
-            console.log('onSeeking');
         }) */
-        app.globalData.backgroundAudioManager.onCanplay(()=>{
-            this.timeUpdate()
-        })
         //播放音乐
         this.timeUpdate()
     }

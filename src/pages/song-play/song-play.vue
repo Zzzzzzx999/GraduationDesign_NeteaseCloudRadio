@@ -149,7 +149,6 @@
 			})
 			app.globalData.backgroundAudioManager.onEnded(() => {
 				this.circlePlay()
-				this.timeUpdate()
 				console.log('onEnded(');
 			})
 			app.globalData.backgroundAudioManager.onPlay(()=>{
