@@ -109,8 +109,8 @@
 			this.playListDJ = app.globalData.playListDJ
 			this.indexDJ = this.playListDJ.findIndex((item) => item.id == app.globalData.idDJ);
 			this.h = uni.getSystemInfoSync().statusBarHeight
-			// this.pid = option.pid || ''
-			this.pid = app.globalData.id
+			this.pid = option.pid || app.globalData.id
+			app.globalData.id = this.pid
 			if(app.globalData.isSame) {
 				if(app.globalData.backgroundAudioManager.src && app.globalData.backgroundAudioManager.title) {
 					getSongDetail(app.globalData.id).then(res => {
@@ -139,6 +139,7 @@
 				})
 			}
 			// 获取歌词
+			console.log('id123',app.globalData.id);
 			this._getSongLyric(app.globalData.id)
 			app.globalData.backgroundAudioManager.onPrev(() => {
 				this.changeSong('pre')
