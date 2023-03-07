@@ -29,7 +29,7 @@
 
 <script>
 const app = getApp()
-import {getProgram} from "../service/djprogram";
+import {getProgram} from "../api/djprogram";
 export default {
   data() {
     return {
@@ -61,15 +61,18 @@ export default {
           app.addSong(data[0].id)
           app.addDJ(this.playList)
           app.playList(data)
+          let id = data[0].id
           if (!app.globalData.isSameDJ) {
             app.globalData.id = data[0].id
             console.log('333');
           }else{
             app.globalData.id = data[app.globalData.index].id
+            id = data[app.globalData.index].id
             console.log('555');
           }
+          console.log('传过去的id',id);
           uni.navigateTo({
-              url: '/pages/song-play/song-play?id=' + data[0].id,
+              url: '/pages/song-play/song-play?id=' + id,
           })
       })
     },

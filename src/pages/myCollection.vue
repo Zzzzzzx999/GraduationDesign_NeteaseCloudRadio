@@ -52,7 +52,7 @@
 
 <script>
 import player from "../components/common-player.vue";
-import {getRecommendedStations} from "../service/djprogram";
+import {getRecommendedStations} from "../api/djprogram";
 
 export default {
     name:"myCollection",
@@ -205,7 +205,7 @@ export default {
 		}
 	}
     .recentPrograms{
-        height: 85vh;
+        height: 100vh;
         // margin: 40rpx 0;
         overflow: scroll;
         .programs{

@@ -62,7 +62,7 @@
 </template>
 
 <script>
-	import {getSonglist, getSongDetail} from '../../service/songs'
+	import {getSonglist, getSongDetail} from '../../api/songs'
 	import player from '../../components/common-player.vue'
 	const app = getApp()
 	export default {

@@ -47,13 +47,13 @@
                 </div>
             </div>
         </div>
-        <player></player>
+        <player class="audio" v-if="showAudio" :key="new Date().getTime()"></player>
     </div>
 </template>
 
 <script>
 import player from "../components/common-player.vue";
-import {getPersonalizeRecommend,getTodayPerfered,getProgram} from "../service/djprogram";
+import {getPersonalizeRecommend,getTodayPerfered,getProgram} from "../api/djprogram";
 const app = getApp()
 
 export default {
@@ -65,6 +65,7 @@ export default {
             myTodayBestDT:[],
             dailySongs:[],
             id:'',
+            showAudio:false,
 		};
 	},
     onLoad(option) {
@@ -76,6 +77,12 @@ export default {
             this._getPersonalizeRecommend()
         }else{
             console.log('@@3');
+        }
+    },
+    onShow() {
+        if(app.globalData.id && app.globalData.playList.length > 0) {
+            this.showAudio = true
+            app.globalData.showAudio = this.showAudio
         }
     },
     methods: {
@@ -140,7 +147,8 @@ export default {
 		}
 	}
     .recentPrograms{
-        height: 85vh;
+        height: 100vh;
+        width: 100vh;
         // margin: 40rpx 0;
         overflow: scroll;
         .programs{

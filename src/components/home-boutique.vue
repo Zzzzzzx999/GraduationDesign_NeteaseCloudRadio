@@ -1,14 +1,14 @@
 <template>
     <scroll-view class="myTodayBest" scroll-y @scroll="pageScroll">
         <banner :banners="banners"></banner>
-        <tab-bar :navId="navId" :navList="navList" @changeNavId="changeNav" :class="isFixed?'fixed':''"/>
+        <tab-bar :navId="navId" :navList="navList" :isFixed="isFixed" @changeNavId="changeNav"/>
 	    <play-list :playList="playList"/>
     </scroll-view>
 </template>
 
 <script>
 
-import {getProgramList,getNewRadioList,getProgram,getHotRadioList,getPaidBoutique,getDjBannerData} from "../service/djprogram";
+import {getProgramList,getNewRadioList,getProgram,getHotRadioList,getPaidBoutique,getDjBannerData} from "../api/djprogram";
 import tabBar from 'components/boutique-nav-tabbar'
 import playList from 'components/boutique-play-list'
 import banner from 'components/boutique-banner'
@@ -163,12 +163,5 @@ export default {
 tab-bar{
 	padding-top: 10rpx;
 }
-.fixed{
-    height: 80rpx;
-    background-color: white;
-    position: fixed;
-    top: 70rpx;
-    left: 0;
-    z-index: 666;
-}
+
 </style>

@@ -32,7 +32,7 @@
 <script>
 const app = getApp()
 import moment from 'moment'
-import {getSongUrl,getSongDetail} from "../service/songs"
+import {getSongUrl,getSongDetail} from "../api/songs"
 export default {
     name:'player',
     data() {
@@ -54,7 +54,6 @@ export default {
             isPlay: false,
             pid: '',
             active: '',
-            timer:'',
         };
     },
     methods: {
@@ -67,7 +66,7 @@ export default {
                     this.pid = app.globalData.pid,
                     this.active = app.globalData.active
                 })
-                this._playListSongInfo()
+                this._playListSongInfo(id)
                 this.playListDJ = app.globalData.playListDJ
                 this.indexDJ = this.playListDJ.findIndex((item) => item.id == app.globalData.idDJ);
             }else{
@@ -78,15 +77,16 @@ export default {
                     this.pid = app.globalData.pid,
                     this.active = app.globalData.active
                 })
-                this._playListSongInfo()
+                this._playListSongInfo(app.globalData.id)
                 this.playListDJ = app.globalData.playListDJ
                 this.indexDJ = this.playListDJ.findIndex((item) => item.id == app.globalData.idDJ);
             }
         },
-        _playListSongInfo(){
+        _playListSongInfo(id){
             if (app.globalData.playList) {
-                this.playListSongInfo = app.globalData.playList.find(item => item.id == app.globalData.id)
-                console.log('playListSongInfo',this.playListSongInfo);
+                this.playListSongInfo = app.globalData.playList.find(item => item.id == id)
+                this.timeUpdate()
+                console.log('playListSongInfo1',this.playListSongInfo);
             }
         },
         play() {
@@ -111,6 +111,7 @@ export default {
         },
         goPlayer(){
             app.globalData.isSame = true
+            app.globalData.isSameDJ = true
             if(this.active == '1') {
                 console.log(123);
                 uni.navigateTo({
@@ -125,10 +126,9 @@ export default {
         },
         watchId(val){
             console.log('此刻的id',val)
+            app.globalData.backgroundAudioManager = uni.getBackgroundAudioManager()
             this._getSongDetail(val)
-            this.timer = new Date().getTime()
-            // this.timeUpdate()
-            // pubsub.publish('hello',666) //emit触发hello事件,发送数据
+            this.timeUpdate()
         },
         autoPlay(playClick,playProgress){
             this.slider.max = app.globalData.songTimeSeconds
@@ -154,16 +154,7 @@ export default {
                     this.progress = progress
                 }
             })
-            console.log('timeUpdatetimeUpdatetimeUpdatetimeUpdate');
-        },
-        circlePlay() {
-            if(app.globalData.circleType == 'icon-xunhuan') {
-                this.changeSong('next')
-            } else {
-                app.globalData.backgroundAudioManager.src = this.musicSrc
-                app.globalData.backgroundAudioManager.title = this.songInfo.name
-                this.changeSong('self')
-            }
+            console.log('timeUpdate打印,是common-player');
         },
     },
     mounted() {
@@ -174,15 +165,15 @@ export default {
         this.indexDJ = this.playListDJ.findIndex((item) => item.id == app.globalData.idDJ);
         this._getSongDetail()
         app.watch(this.watchId,'id') 
-        /* app.globalData.backgroundAudioManager.onNext(() => {
+        app.globalData.backgroundAudioManager.onNext(() => {
             this.changeSong('next')
-        }) */
+            this.timeUpdate()
+        })
         app.globalData.backgroundAudioManager.onEnded(() => {
             this.nextSong()
             console.log('onEnded11111');
-            // this.circlePlay()
-            this.timeUpdate()
-            app.globalData.backgroundAudioManager.play()
+            // this.timeUpdate()
+            // app.globalData.backgroundAudioManager.play()
         })
         app.globalData.backgroundAudioManager.onPlay(()=>{
             this.isPlay = true

@@ -4,17 +4,10 @@
       <div class="headSculpture">
         <div class="userHeadSculpture">
           <!-- <image lazy-load :src="loginWay !== ''?'https://img1.baidu.com/it/u=2145784900,2865107303&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500':'../static/icon/homeIcon/未登录-头像.png'"></image> -->
-          <image
-            lazy-load
-            :src="
-              loginWay !== ''
-                ? userInfo.avatarUrl
-                : '../static/icon/homeIcon/未登录-头像.png'
-            "
-          ></image>
+          <image lazy-load :src="loginWay !== ''? userInfo.avatarUrl: '../static/icon/homeIcon/未登录-头像.png'"></image>
           <!-- <image lazy-load id="wechat" :src="loginWay=='weixin'?'../static/icon/homeIcon/微信.png':'../static/icon/homeIcon/QQ.png'"></image> -->
           <!-- <image lazy-load v-if="loginWay=='weixin'" id="wechat" src="../static/icon/homeIcon/微信.png"></image>
-                <image lazy-load v-if="loginWay=='qq'" id="wechat" src="../static/icon/homeIcon/QQ.png"></image> -->
+          <image lazy-load v-if="loginWay=='qq'" id="wechat" src="../static/icon/homeIcon/QQ.png"></image> -->
         </div>
       </div>
       <div class="infoDetail">
@@ -25,7 +18,7 @@
               <span>LV{{ level.level }}</span>
             </div>
           </div>
-          <div class="recording" @tap.stop.stop>
+          <div class="recording" @tap.stop>
             <image lazy-load src="../static/icon/麦克风.png"></image>
             <span>录制</span>
           </div>

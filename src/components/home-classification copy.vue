@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import {getNavList, getPlayList} from "../service/songs"
+    import {getNavList, getPlayList} from "../api/songs"
     import tabBar from '../components/classification-nav-tabbar'
     import playList from '../components/classification-play-list'
     export default {

@@ -1,6 +1,7 @@
 <template>
   <scroll-view
     class="container"
+    :class="isFixed?'fixed':''"
     scroll-x
     :scroll-into-view="'scroll' + navId"
     scroll-with-animation
@@ -27,6 +28,10 @@ export default {
     navId: {
       type: String,
       value: "",
+    },
+    isFixed: {
+      type: Boolean,
+      value: false,
     },
   },
   methods: {
@@ -63,5 +68,14 @@ export default {
   color: #fff;
   background-color: rgba(255, 51, 0, 0.5);
   border-radius: 14rpx;
+}
+.fixed{
+  height: 80rpx;
+  background-color: white;
+  position: fixed;
+  top: 70rpx;
+  left: 0;
+  line-height: 80rpx;
+  z-index: 666;
 }
 </style>

@@ -72,7 +72,7 @@
 <script>
 	const app = getApp()
 	import moment from 'moment'
-	import {getSongUrl, getSongLyric,getSonglist,getSongDetail} from '../../service/songs'
+	import {getSongUrl, getSongLyric,getSonglist,getSongDetail} from '../../api/songs'
 	let time = null
 	export default {
 		data() {
@@ -109,38 +109,66 @@
 			this.playListDJ = app.globalData.playListDJ
 			this.indexDJ = this.playListDJ.findIndex((item) => item.id == app.globalData.idDJ);
 			this.h = uni.getSystemInfoSync().statusBarHeight
-			this.pid = option.pid || app.globalData.id
+			this.pid = option.pid || option.id || app.globalData.id
 			app.globalData.id = this.pid
-			if(app.globalData.isSame) {
-				if(app.globalData.backgroundAudioManager.src && app.globalData.backgroundAudioManager.title) {
-					getSongDetail(app.globalData.id).then(res => {
+			console.log('pid',this.pid);
+			setTimeout(() => {
+				console.log('app.globalData.id',app.globalData.id);
+			}, 300);
+			if(app.globalData.isSameDJ) {
+				if (app.globalData.isSame){
+					getSongDetail(this.pid || app.globalData.id).then(res => {
 						this.dt = moment(res.songs[0].dt).format('mm:ss')
 						this.songInfo = res.songs[0]
 						this.playList = app.globalData.playList
 					})
+					console.log('999');
+				}else if(app.globalData.backgroundAudioManager.src && app.globalData.backgroundAudioManager.title) {
+					getSongDetail(this.pid || app.globalData.id).then(res => {
+						this.dt = moment(res.songs[0].dt).format('mm:ss')
+						this.songInfo = res.songs[0]
+						this.playList = app.globalData.playList
+					})
+					console.log('@@@@11');
 					app.globalData.backgroundAudioManager.play()
-				} else {
-					getSongDetail(app.globalData.id).then(res => {
+				}else {
+					app.globalData.backgroundAudioManager = uni.getBackgroundAudioManager()
+					getSongDetail(this.pid || app.globalData.id).then(res => {
+						console.log('@@@@@2',app.globalData.playList);
 						this.dt = moment(res.songs[0].dt).format('mm:ss');
 						this.songInfo = res.songs[0]
 						this.playList = app.globalData.playList
-						this._getUrl(app.globalData.id)
+						this._playListSongInfo()
+						this._getUrl(this.pid ||app.globalData.id)
 					})
 					console.log('@@@@@2');
 				}
+				/* if (app.globalData.isSame) {
+					app.watch(this.watchId,'id') 
+				}else{
+					getSongDetail(this.pid).then(res => {
+						this.dt = moment(res.songs[0].dt).format('mm:ss')
+						this.songInfo = res.songs[0]
+						this.playList = app.globalData.playList
+						this._playListSongInfo()
+						this._getUrl(this.pid)
+					})
+					console.log('@@@@@3');
+				} */
 			} else {
 				app.globalData.backgroundAudioManager = uni.getBackgroundAudioManager()
-				getSongDetail(app.globalData.id).then(res => {
+				getSongDetail(this.pid || app.globalData.id).then(res => {
 					this.dt = moment(res.songs[0].dt).format('mm:ss')
 					this.songInfo = res.songs[0]
 					console.log('songInfo1',this.songInfo);
 					this.playList = app.globalData.playList
 					this._getUrl(app.globalData.id)
+					console.log('@@@@@4');
 				})
 			}
 			// 获取歌词
-			console.log('id123',app.globalData.id);
-			this._getSongLyric(app.globalData.id)
+			// console.log('id123',app.globalData.id);
+			this._getSongLyric(this.pid)
 			app.globalData.backgroundAudioManager.onPrev(() => {
 				this.changeSong('pre')
 			})
@@ -150,6 +178,7 @@
 			})
 			app.globalData.backgroundAudioManager.onEnded(() => {
 				this.circlePlay()
+				this._playListSongInfo()
 				console.log('onEnded(');
 			})
 			app.globalData.backgroundAudioManager.onPlay(()=>{
@@ -166,12 +195,6 @@
 				app.globalData.backgroundAudioManager.currentTime = 0
 				app.globalData.backgroundAudioManager.duration = 0
 			})
-			/* app.globalData.backgroundAudioManager.onCanplay(()=>{
-				this.timeUpdate()
-			}) */
-			/* app.globalData.backgroundAudioManager.onError(()=>{
-				console.log('播放错误');
-			}) */
 			//播放音乐
 			this.timeUpdate()
 			//拿到进度条的宽度
@@ -191,8 +214,13 @@
 			},
 			_playListSongInfo(){
 				if (app.globalData.playList) {
-					this.playListSongInfo = app.globalData.playList.find(item => item.id == app.globalData.id)
-					console.log('playListSongInfo',this.playListSongInfo);
+					if (app.globalData.id) {
+						this.playListSongInfo = app.globalData.playList.find(item => item.id == app.globalData.id)
+						console.log('playListSongInfo',this.playListSongInfo);
+					}else if (this.pid) {
+						this.playListSongInfo = app.globalData.playList.find(item => item.id == this.pid)
+						console.log('playListSongInfo',this.playListSongInfo);					
+					}
 				}
 			},
 			//获取歌词
@@ -256,6 +284,7 @@
 			},
 			_getUrl(id) {
 				getSongUrl(id).then(res => {
+					console.log('_getUrl',res);
 					const musicSrc = res.data[0].url
 					if(musicSrc) {
 						this.musicSrc = musicSrc
@@ -330,6 +359,7 @@
 					console.log('res@@',res);
 					this.getSongInfo(res.songs[0])
 				})
+				this._playListSongInfo()
 				this.timeUpdate()
 			},
 			//歌曲播放函数
@@ -403,7 +433,8 @@
 						}
 					}
 				})
-			}
+				console.log('timeUpdate打印了,是song-play');
+			},
 		},
 		onShow: function() {
 			this.marginTop = 0
@@ -570,7 +601,7 @@
 /* 进度条 */
 .progress {
   position: absolute;
-  bottom: 160rpx;
+  bottom: 210rpx;
   left: 0;
   width: 100%;
   height: 60rpx;
@@ -615,7 +646,7 @@
 /* 控制区 */
 .footer {
   position: absolute;
-  bottom: 0;
+  bottom: 50rpx;
   left: 0;
   width: 100%;
   height: 160rpx;
@@ -648,7 +679,7 @@
 /* 歌词部分 */
 .lyric-content {
   position: absolute;
-  bottom: 280rpx;
+  bottom: 330rpx;
   text-align: center;
   width: 100%;
   height: 84px; 

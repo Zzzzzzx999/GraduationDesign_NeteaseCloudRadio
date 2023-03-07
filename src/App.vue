@@ -1,12 +1,12 @@
 <script>
 // import {audio} from './mixin'
-import {getDetail,getProgram} from "./service/djprogram";
+import {getDetail,getProgram} from "./api/djprogram";
 	export default {
 		// mixins:[audio],
 		onLaunch: function() {
 			let isLogin = !!(wx.getStorageSync('cookies')) && !!(wx.getStorageSync('userInfo'))
 			this.globalData.isLogin = isLogin
-			this.globalData.backgroundAudioManager = wx.getBackgroundAudioManager();
+			// this.globalData.backgroundAudioManager = wx.getBackgroundAudioManager();
 			if(!isLogin) {
 				uni.navigateTo({
 					url: '/pages/login/login'
@@ -32,23 +32,29 @@ import {getDetail,getProgram} from "./service/djprogram";
 			addSong(id) {
 				if(this.globalData.id && this.globalData.id == id) {
 					this.globalData.isSame = true
-					console.log('@@@');
+					// this.globalData.isSameDJ = true
+					console.log('isSame = true');
 				} else {
 					this.globalData.isSame = false
+					// console.log('this.globalData.id',this.globalData.id);
+					// console.log('id',id);
+					console.log('isSame = false');
 					this.globalData.backgroundAudioManager = {}
 					this.globalData.id = id
 				}
 			},
 			addDJ(dj) {
-				if (this.globalData.playListDJ && this.globalData.playListDJ == dj) {
-					this.globalData.isSameDJ = true
-				}else {
-					this.globalData.isSameDJ = false
-					this.globalData.playListDJ = dj
-				}
+				this.globalData.playListDJ = dj
 			},
 			playList(arr) {
-				this.globalData.playList = arr
+				if (this.globalData.playList && this.globalData.playList[0].id == arr[0].id) {
+					this.globalData.isSameDJ = true
+					console.log('执行了isSameDJ = true');
+				}else {
+					this.globalData.isSameDJ = false
+					console.log('执行了isSameDJ = false');
+					this.globalData.playList = arr
+				}
 			},
 			getSong(type) {
 				if(this.globalData.playList.length > 1) {
@@ -89,8 +95,17 @@ import {getDetail,getProgram} from "./service/djprogram";
 					configurable:true,
 					enumerable:true,
 					set:function(value){
-						this._consumerGoodsStatus=value
-						method(value)
+						/* console.log('that',that);
+						console.log('this',this); */
+						// console.log('this.pid',this.pid);
+						setTimeout(() => {
+							/* console.log('app.globalData.id',obj.id);
+							console.log('value',value); */
+							if (obj.id != value) {
+								this._consumerGoodsStatus=value
+								method(value)
+							}
+						}, 20);
 					},
 					get:function(value){
 						return this._consumerGoodsStatus
@@ -113,12 +128,12 @@ import {getDetail,getProgram} from "./service/djprogram";
 			//是否登陆
 			isLogin: false,
 			// 播放列表
-			playList: [],
+			playList: null,
 			index: 0,
 			state: false,
 			isSame: false,
 			isSameDJ: false,
-			id: '',
+			id: null,
 			pid: '',
 			active: '',
 			backgroundAudioManager:{},

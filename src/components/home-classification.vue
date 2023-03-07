@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import {getCatelistDJ, getRecommendTypeDJ} from "../service/djprogram"
+    import {getCatelistDJ, getRecommendTypeDJ} from "../api/djprogram"
     import tabBar from '../components/classification-nav-tabbar'
     import playList from '../components/classification-play-list'
     export default {

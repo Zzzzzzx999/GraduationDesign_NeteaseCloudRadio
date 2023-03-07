@@ -54,6 +54,39 @@ export function loginEmail(info) {
     }
   })
 }
+// 获取登录的key值
+export function getLoginKey() {
+  return request({
+    url: '/login/qr/key',
+  })
+}
+
+// 通过key获取二维码
+export function getLoginCreateQr(key) {
+  return request({
+    url: '/login/qr/create',
+    data:{
+      key:key,
+      qrimg:'qrimg'
+    }
+  })
+}
+// 通过key检查二维码是否失效
+export function getLoginCheckQr(key) {
+  return request({
+    url: '/login/qr/check',
+    data:{
+      key:key
+    }
+  })
+}
+// 游客登录
+export function visitorLogin() {
+  return request({
+    url: '/register/anonimous',
+  })
+}
+
 //用户信息
 export function userDetail(uid) {
   return request({

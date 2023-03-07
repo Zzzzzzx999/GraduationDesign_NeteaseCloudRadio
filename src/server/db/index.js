@@ -4,6 +4,6 @@ const db = mysql.createPool({
     host:'192.168.1.8',
     user:'root',
     password:'mysql',
-    database:'qiefm'
+    database:'musicStation'
 })
 module.exports = db

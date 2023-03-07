@@ -11,7 +11,7 @@
 
 <script>
 const app = getApp()
-import {getProgram} from "../service/djprogram";
+import {getProgram} from "../api/djprogram";
 export default {
   data() {
     return {

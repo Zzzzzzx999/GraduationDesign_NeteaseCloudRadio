@@ -145,8 +145,8 @@
 
 <script>
 const app = getApp()
-import {search} from '../service/home';
-import {getProgram} from "../service/djprogram";
+import {search} from '../api/home';
+import {getProgram} from "../api/djprogram";
 import player from "../components/common-player.vue";
 export default {
     name:'searchResult',

@@ -12,7 +12,8 @@
                     <div class="name">
                         <span>{{userInfo.nickname}}</span>
                         <div class="grade">
-                            <span>LV{{level.level}}</span>
+                            <span v-if="level.level">LV{{ level.level }}</span>
+                            <span v-else>LV0</span>
                         </div>
                     </div>
                     <div class="myInfo">
@@ -39,7 +40,8 @@
                         <div class="grade">
                             <div class="theGrade userGrades">
                                 <image src="../static//Picture_material/gift.png"></image>
-                                <span>LV{{level.level}}</span>
+                                <span v-if="level.level">LV{{ level.level }}</span>
+                                <span v-else>LV0</span>
                             </div>
                             <div class="progressBar">
                                 <slider class="slider" min="0" max="100" :value="sliderProgress" activeColor="#D3AB58" block-size="12"></slider>
@@ -99,7 +101,7 @@
 
 <script>
 import player from "../components/common-player.vue";
-import {userDetail} from "../service/home";
+import {userDetail} from "../api/home";
 
 export default {
     name:'myPage',

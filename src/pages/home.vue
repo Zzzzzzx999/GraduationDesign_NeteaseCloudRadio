@@ -1,7 +1,7 @@
 <template>
     <view class="home">
         <view class="top">
-            <view class="search top-image" @click="changePath('./search')">
+            <view class="search top-image" @click="changePath('./search/search')">
                 <image lazy-load src="../static/icon/search.png"></image>
             </view>
             <view class="regions">
@@ -25,7 +25,7 @@
 <script>
 import pubsub from 'pubsub-js'
 import player from "../components/common-player.vue";
-import {getLevel} from "../service/home";
+import {getLevel} from "../api/home";
 import {my} from '../components/home-my.vue'
 import {boutique} from '../components/home-boutique.vue'
 import {classification} from '../components/home-classification.vue'
@@ -84,6 +84,17 @@ export default {
             this.timer = new Date().getTime()
             console.log('this.timer',this.timer);
         })
+        /* wx.request({
+            method: 'POST',
+            url: 'http://127.0.0.1:3000/getUser',
+            success: function (res) {
+                console.log('数据获取成功',res);
+            },
+            fail: function () {
+                console.log("获取失败");
+            }
+        }) */
+        
     },
     methods: {
         regionsChange(id){

@@ -176,6 +176,7 @@
 </template>
 
 <script>
+const app = getApp()
 import player from "../components/common-player.vue";
 export default {
   name:"setting",

@@ -1,4 +1,4 @@
-import {getSongUrl,getSongLyric,getSonglist,getSongDetail,activeList} from "./service/songs";
+import {getSongUrl,getSongLyric,getSonglist,getSongDetail,activeList} from "./api/songs";
 import moment from 'moment'
 
 const app = getApp()

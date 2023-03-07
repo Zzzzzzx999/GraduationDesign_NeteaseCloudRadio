@@ -248,12 +248,12 @@
 
 <script>
 import moment from 'moment'
-import {audio,abc} from '../mixin'
-// import {getSongUrl} from "./service/songs";
+// import {audio,abc} from '../mixin'
+// import {getSongUrl} from "./api/songs";
 const app = getApp()
 export default {
     name:"playPage",
-    mixins:[audio,abc],
+    // mixins:[audio,abc],
     data() {
         return {
             collect: false,     //收藏

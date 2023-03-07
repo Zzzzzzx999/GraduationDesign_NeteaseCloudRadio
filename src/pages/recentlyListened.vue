@@ -89,8 +89,8 @@
 
 <script>
 const app = getApp()
-import {getRecentPlayList} from '../service/home'
-import {getSongDetail} from '../service/songs'
+import {getRecentPlayList} from '../api/home'
+import {getSongDetail} from '../api/songs'
 import player from "../components/common-player.vue";
 export default {
     name:"recentlyListened",

@@ -18,7 +18,8 @@ function request(options, method='GET') {
       header: {
 				'content-type': 'application/x-www-form-urlencoded;application/json;charset=UTF-8', 
 				// cookies: uni.getStorageSync('cookies')
-        cookie:uni.getStorageSync('cookies')?uni.getStorageSync('cookies').toString():''
+        cookie:uni.getStorageSync('cookies')?uni.getStorageSync('cookies').toString():'',
+        // time:new Date().getTime()
       },
       success: function(res) {
         if(options.data && options.data.islogin) {

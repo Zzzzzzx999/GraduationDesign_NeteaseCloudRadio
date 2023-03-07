@@ -18,24 +18,27 @@
 				<text class="tit">验证码</text>
 				<view style="width:100%">
 					<input style="width: 60%;display: inline-block;" v-model="captcha" maxlength="4" type="number" placeholder="请输入验证码"/>
-					<button class="confim-num" @tap="getConfimNum">{{count>0?'('+count+'s)':'获取验证码'}}</button>
+					<button class="confim-num" @click="getConfimNum">{{count>0?'('+count+'s)':'获取验证码'}}</button>
 				</view>
 		  </view>
 	    </view>
-	    <button class="confirm-btn" @tap="login">登录</button>
-	    <view class="forget-section" @tap="changeLoginType">
+	    <button class="confirm-btn" @click="login">登录</button>
+	    <view class="forget-section" @click="changeLoginType">
 	      {{change?'切换手机密码登陆':'切换成手机验证码登录'}}
 	    </view>
 	  </view>
 	  <view class="register-section">
 	    还没有账号?
-	    <text >马上注册</text>
+	    <text>游客登陆</text><text >马上注册</text>
+		<!-- <view>
+			<text>游客登陆</text>
+		</view> -->
 	  </view>
 	</view>
 </template>
 
 <script>
-	import {login, sendCaptcha} from '../../service/home'
+	import {login, sendCaptcha,visitorLogin} from '../../api/home'
 	export default {
 		data() {
 			return {
@@ -135,7 +138,14 @@
 										key: 'userInfo',
 									})
 									wx.redirectTo({
-										url: '/pages/home',
+										url: '/src/pages/home.vue',
+									})
+									console.log('登录成功！');
+								}else{
+									console.log('未知错误！');
+									wx.showToast({
+										title: '未知错误！',
+										icon: 'none'
 									})
 								}
 							})
@@ -143,7 +153,20 @@
 					}
 				}
 			},
-		}
+		},
+		created() {
+			/* uni.showModal({
+				title: '提示',
+				content: '当前仅支持二维码登录',
+				showCancel:false,
+				success: function (res) {
+					console.log('用户点击确定');
+					if (res.confirm) {
+						uni.navigateTo({url:'../loginQR/loginQR'})
+					}
+				}
+			}); */
+		},
 	}
 </script>
 

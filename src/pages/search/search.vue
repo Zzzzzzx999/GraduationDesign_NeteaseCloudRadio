@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {searchRecord,searchSuggest,search} from '../service/home'
+import {searchRecord,searchSuggest,search} from '../../api/home'
 export default {
     name:"search",
     data() {
@@ -73,11 +73,11 @@ export default {
         beginSearch(){
             console.log(123);
             wx.setStorageSync('inputValue',this.searchValue)
-            wx.navigateTo({url:'./searchResult?keyword='+this.searchValue})
+            wx.navigateTo({url:'../searchResult?keyword='+this.searchValue})
         },
         searchThis(keyword){
             this.searchValue = keyword
-            wx.navigateTo({url:"./searchResult?keyword="+this.searchValue})
+            wx.navigateTo({url:"../searchResult?keyword="+this.searchValue})
         },
 
 
