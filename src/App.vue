@@ -6,7 +6,7 @@ import {getDetail,getProgram} from "./api/djprogram";
 		onLaunch: function() {
 			let isLogin = !!(wx.getStorageSync('cookies')) && !!(wx.getStorageSync('userInfo'))
 			this.globalData.isLogin = isLogin
-			// this.globalData.backgroundAudioManager = wx.getBackgroundAudioManager();
+			this.globalData.backgroundAudioManager = wx.getBackgroundAudioManager();
 			if(!isLogin) {
 				uni.navigateTo({
 					url: '/pages/login/login'
@@ -192,5 +192,8 @@ import {getDetail,getProgram} from "./api/djprogram";
 	  width: 100%;
 	  z-index: 88;
 	}
+	player{
+        height: 200rpx;
+    }
 
 </style>

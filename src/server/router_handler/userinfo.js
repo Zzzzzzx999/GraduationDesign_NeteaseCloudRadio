@@ -4,11 +4,11 @@ const bcrypt = require('bcryptjs')
 
 // 获取用户基本信息的处理函数
 exports.getUserInfo = (req,res)=>{
-    // const sqlStr = 'select id,username,nickname,email,user_pic from ev_users where id=?'
-    const sqlStr = 'select * from rewards'
-    db.query(sqlStr,(err,results)=>{
+    const sqlStr = 'select id,username,nickname,email,user_pic from ev_users where id=?'
+    // const sqlStr = 'select * from ev_users'
+    db.query(sqlStr,req.user.id,(err,results)=>{
         if(err) return res.cc(err)
-        // if(results.length !== 1) return res.cc('获取用户信息失败！')
+        if(results.length !== 1) return res.cc('获取用户信息失败！')
         res.send({
             status:0,
             message:'获取用户信息成功！',
@@ -20,10 +20,17 @@ exports.getUserInfo = (req,res)=>{
 exports.updateUserInfo = (req,res)=>{
     // 定义待执行的 SQL 语句
     const sqlStr = 'update ev_users set ? where id=?'
-    db.query(sqlStr,[req.body,req.body.id],(err,results)=>{
+    console.log(req.body);
+    const userInfo = req.body
+    db.query(sqlStr,[userInfo,userInfo.id],(err,results)=>{
         if(err) return res.cc(err)
         if(results.affectedRows !== 1) return res.cc('更新用户的基本信息失败!')
-        res.cc('更新用户信息成功',0)
+        // res.cc('更新用户信息成功',0)
+        res.send({
+            status:0,
+            message:'更新用户信息成功！',
+            profile:userInfo
+        })
     })
 }
 // 更新用户密码的处理函数

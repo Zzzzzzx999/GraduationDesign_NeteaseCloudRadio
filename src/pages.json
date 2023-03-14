@@ -26,6 +26,18 @@
 			}
 		},
 		{
+			"path": "pages/reguser/reguser",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
+			"path": "pages/userInfo/userInfo",
+			"style": {
+				"navigationBarTitleText": "填写信息"
+			}
+		},
+		{
 			"path": "pages/runningListening",
 			"style": {
 				"navigationBarTitleText": "跑步听"
@@ -62,7 +74,7 @@
 			}
 		},
 		{
-			"path": "pages/searchResult",
+			"path": "pages/searchResult/searchResult",
 			"style": {
 				"navigationBarTitleText": "搜索结果"
 			}

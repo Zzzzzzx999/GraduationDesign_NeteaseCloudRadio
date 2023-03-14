@@ -13,9 +13,9 @@
                 <image lazy-load src="../static/icon/countdown.png" @click="changePath('./recentlyListened')"></image>
             </view>
         </view>
-        <view class="content">
-            <boutique v-if="regions[0].select" :userInfo=userInfo :level=level></boutique>
-            <classification v-else-if="regions[1].select" :userInfo=userInfo :level=level></classification>
+        <view class="content" :style="showAudio?'margin-bottom:200rpx;':''">
+            <boutique v-if="regions[0].select"></boutique>
+            <classification v-else-if="regions[1].select"></classification>
             <my v-else :userInfo=userInfo :level=level></my>
         </view>
         <player class="audio" v-if="showAudio" :key="timer"></player>
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import {login} from '../api/serverAPI/user'
 import pubsub from 'pubsub-js'
 import player from "../components/common-player.vue";
 import {getLevel} from "../api/home";
@@ -43,18 +44,6 @@ export default {
                 {id:2,title:'分类',select:false},
                 {id:3,title:'我的',select:false},
             ],
-            userInfo:{
-                // 用户信息默认初始数据
-                uid:'',
-                nickname:'未登录',
-                level:'1',  //等级
-                avatarUrl:'', //头像
-                follows:'0', //关注
-                followeds:'0', //粉丝
-            },
-            userDetail:{
-                
-            },
             level:{},
             timer:'',
         }
@@ -63,20 +52,14 @@ export default {
         if(app.globalData.id && app.globalData.playList.length > 0) {
             this.showAudio = true
             app.globalData.showAudio = this.showAudio
-        }
-    },
+        }    
+    },    
     onLoad(query){
         console.log('1',query);
         if (query) {
             this.loginWay=wx.getStorageSync('loginWay')
         }
-        let userInfo = wx.getStorageSync('userInfo')
-        if(userInfo) {
-            this.userInfo = JSON.parse(userInfo)
-            console.log(this.userInfo,'userInfo');
-            this.uid = this.userInfo.userId
-            this._getLevel()
-        }
+        this.getUserInfo()
     },
     mounted() {
         this.pubId=pubsub.subscribe('hello',(msgName,data)=>{
@@ -85,8 +68,13 @@ export default {
             console.log('this.timer',this.timer);
         })
         /* wx.request({
-            method: 'POST',
-            url: 'http://127.0.0.1:3000/getUser',
+            method: 'GET',
+            url: 'http://127.0.0.1:3000/my/userinfo',
+            data:{
+                username:'zhou',
+                password:'123456',
+                id:1,
+            },
             success: function (res) {
                 console.log('数据获取成功',res);
             },
@@ -94,7 +82,14 @@ export default {
                 console.log("获取失败");
             }
         }) */
-        
+        let params={
+            username:'admin1',
+            password:'123456'
+        }
+        login(params).then(res=>{
+            console.log('登录',res);
+            uni.setStorageSync('token',res.token)
+        })
     },
     methods: {
         regionsChange(id){
@@ -106,6 +101,17 @@ export default {
                     this.regions[index].select = true
                 }
             }
+        },
+        getUserInfo(){
+            let userInfo = wx.getStorageSync('userDetail')
+            this.userInfo = userInfo
+            /* let userInfo = wx.getStorageSync('userInfo')
+            if(userInfo) {
+                this.userInfo = JSON.parse(userInfo)
+                console.log(this.userInfo,'userInfo');
+                this.uid = this.userInfo.userId
+                this._getLevel()
+            } */
         },
         changePath(path){
             wx.navigateTo({url:path})
@@ -177,9 +183,6 @@ export default {
     .content{
         flex-grow: 1;
         overflow: scroll;
-    }
-    player{
-        height: 300rpx;
     }
     .wx-slider-thumb {
         display: none;

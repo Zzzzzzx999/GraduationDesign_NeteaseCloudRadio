@@ -14,13 +14,16 @@
                     <span>{{songInfo.ar[0].name || '网络歌手'}}</span>
                 </view>
             </view>
-            <view class="broadcast" @click.stop>
+            <view class="broadcast" @click.stop style="padding-right: 40rpx;">
                 <image mode="aspectFill" @click="play" :src="isPlay?'../static/icon/24gf-pauseCircle.png':'../static/icon/24gf-playCircle.png'"></image>
+            </view>
+            <view class="broadcast" @click.stop>
+                <image mode="aspectFill" src="../static/icon/24gf-nextCircle.png" @click.stop="nextSong"></image>
             </view>
             <!-- <view class="text" @click.stop>
                 <image mode="aspectFill" @click="IsText=!IsText" :src="IsText?'../static/icon/文件.png':'../static/icon/homeIcon/文件.png'"></image>
             </view> -->
-            <view class="iconfont icon-xiayiqu101 text" @click.stop="nextSong"/>
+            <!-- <view class="iconfont icon-xiayiqu101 text" @click.stop="nextSong"/> -->
         </view>
         <!-- 进度条 -->
         <view class="progressBar" @click.stop>
@@ -145,7 +148,7 @@ export default {
             }
         },
         timeUpdate(){
-            app.globalData.backgroundAudioManager.onTimeUpdate((e)=> {
+            /* app.globalData.backgroundAudioManager.onTimeUpdate((e)=> {
                 let self = this
                 let ct = moment(app.globalData.backgroundAudioManager.currentTime * 1000).format('mm:ss')
                 if(ct !== self.ct) {
@@ -154,7 +157,7 @@ export default {
                     this.progress = progress
                 }
             })
-            console.log('timeUpdate打印,是common-player');
+            console.log('timeUpdate打印,是common-player'); */
         },
     },
     mounted() {
@@ -164,7 +167,7 @@ export default {
         this.playListDJ = app.globalData.playListDJ
         this.indexDJ = this.playListDJ.findIndex((item) => item.id == app.globalData.idDJ);
         this._getSongDetail()
-        app.watch(this.watchId,'id') 
+        app.watch(this.watchId,'id')
         app.globalData.backgroundAudioManager.onNext(() => {
             this.changeSong('next')
             this.timeUpdate()
@@ -193,7 +196,7 @@ export default {
             this.timeUpdate()
         }) */
         //播放音乐
-        this.timeUpdate()
+        // this.timeUpdate()
     }
 }
 </script>
@@ -248,20 +251,11 @@ export default {
             }
         }
         .broadcast{
-            padding-right: 40rpx;
             image{
-                width:50rpx;
-                height: 50rpx;
-                min-width: 50rpx;
-                min-height: 50rpx;
-            }
-        }
-        .text{
-            image{
-                width: 50rpx;
-                height: 50rpx;
-                min-width: 50rpx;
-                min-height: 50rpx;
+                width:55rpx;
+                height: 55rpx;
+                min-width: 55rpx;
+                min-height: 55rpx;
             }
         }
     }

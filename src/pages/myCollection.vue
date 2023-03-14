@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </div>
-            <div class="programs" v-for="item in myCollectionDT" :key="item.id">
+            <div class="programs" v-for="(item,index) in myCollectionDT" :key="item.id" :data-id="item.id" :data-index="index" @tap.stop="goPlayPage">
                 <div class="programLeft">
                     <image mode="aspectFill" :src="item.program.radio.picUrl"></image>
                 </div>
@@ -51,8 +51,9 @@
 </template>
 
 <script>
+const app = getApp()
 import player from "../components/common-player.vue";
-import {getRecommendedStations} from "../api/djprogram";
+import {getRecommendedStations,getProgram} from "../api/djprogram";
 
 export default {
     name:"myCollection",
@@ -98,7 +99,7 @@ export default {
         //         console.log("获取失败");
         //     }
         // })
-        wx.request({
+       /*  wx.request({
             method: 'GET',
             url: 'https://autumnfish.cn/search',
             data: {
@@ -113,7 +114,7 @@ export default {
             fail: function () {
                 console.log("获取失败111");
             }
-        })
+        }) */
     },
     methods: {
         /* subscribe(keywords,type,code){
@@ -172,7 +173,24 @@ export default {
                 this.myCollectionDT = res.result
                 console.log('myCollectionDT...',this.myCollectionDT);
             })
-        }
+        },
+        goPlayPage(e,rid){
+            console.log(e);
+            app.globalData.idDJ = e.currentTarget.dataset.id
+            //等待接口响应后处理函数 这里的id要处理 
+            getProgram(e.currentTarget.dataset.id).then(res=>{
+                console.log('res',res);
+                let data = res.programs.map(item => item);
+                console.log('mainSongdatadata',data);
+                app.globalData.index = 0
+                app.addDJ(this.myCollectionDT)
+                app.addSong(data[0].id)
+                app.playList(data)
+                uni.navigateTo({
+                    url: '/pages/song-play/song-play?id=' + data[0].id,
+                })
+            })
+        },
     },
 }
 </script>

@@ -1,10 +1,17 @@
 <template>
   <div class="home-my">
-    <div class="myInfo" @tap.stop="changePath('./myPage')">
+    <div class="myInfo" @click="changePath('./myPage')">
       <div class="headSculpture">
         <div class="userHeadSculpture">
           <!-- <image lazy-load :src="loginWay !== ''?'https://img1.baidu.com/it/u=2145784900,2865107303&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500':'../static/icon/homeIcon/未登录-头像.png'"></image> -->
-          <image lazy-load :src="loginWay !== ''? userInfo.avatarUrl: '../static/icon/homeIcon/未登录-头像.png'"></image>
+          <image
+            lazy-load
+            :src="
+              isLogin
+                ? userInfo.user_pic
+                : '../static/icon/homeIcon/未登录-头像.png'
+            "
+          ></image>
           <!-- <image lazy-load id="wechat" :src="loginWay=='weixin'?'../static/icon/homeIcon/微信.png':'../static/icon/homeIcon/QQ.png'"></image> -->
           <!-- <image lazy-load v-if="loginWay=='weixin'" id="wechat" src="../static/icon/homeIcon/微信.png"></image>
           <image lazy-load v-if="loginWay=='qq'" id="wechat" src="../static/icon/homeIcon/QQ.png"></image> -->
@@ -15,7 +22,7 @@
           <div class="name">
             <span>{{ userInfo.nickname }}</span>
             <div class="grade">
-              <span>LV{{ level.level }}</span>
+              <span>LV{{ userLevel }}</span>
             </div>
           </div>
           <div class="recording" @tap.stop>
@@ -25,7 +32,7 @@
         </div>
         <div class="infoDetailBottom">
           <div class="works bottomItem">
-            <span>{{ works }}</span>
+            <span>{{ userInfo.works }}</span>
             <span class="infoType">作品</span>
           </div>
           <div class="follow bottomItem">
@@ -41,7 +48,10 @@
     </div>
     <div class="functionalDomain">
       <div class="areasMy">
-        <div class="functionalItem" @tap.stop="changePath('./recentlyListened')">
+        <div
+          class="functionalItem"
+          @tap.stop="changePath('./recentlyListened')"
+        >
           <div class="functionalItemLeft">
             <image
               lazy-load
@@ -73,7 +83,7 @@
             ></image>
           </div>
         </div>
-        <div class="functionalItem" @tap.stop="changePath('./myCollection')">
+        <!-- <div class="functionalItem" @tap.stop="changePath('./myCollection')">
           <div class="functionalItemLeft">
             <image
               lazy-load
@@ -88,12 +98,15 @@
               src="../static/icon/homeIcon/右箭头.png"
             ></image>
           </div>
-        </div>
-        <div class="functionalItem" @tap.stop="changePath('./today-Best?ids='+'1')">
+        </div> -->
+        <div
+          class="functionalItem"
+          @tap.stop="changePath('./today-Best?ids=' + '1')"
+        >
           <div class="functionalItemLeft">
             <image
               lazy-load
-              src="../static/icon/homeIcon/cart_fill.png"
+              src="../static/icon/homeIcon/home_fill.png"
             ></image>
             <span>今日优选电台</span>
           </div>
@@ -105,7 +118,10 @@
             ></image>
           </div>
         </div>
-        <div class="functionalItem" @tap.stop="changePath('./today-Best?ids='+'2')">
+        <div
+          class="functionalItem"
+          @tap.stop="changePath('./today-Best?ids=' + '2')"
+        >
           <div class="functionalItemLeft">
             <image
               lazy-load
@@ -138,7 +154,7 @@
           </div>
         </div>
       </div>
-      <div class="areasCentre">
+      <!-- <div class="areasCentre">
         <div class="functionalItem">
           <div class="functionalItemLeft">
             <image
@@ -171,9 +187,12 @@
             ></image>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="areasListen">
-        <div class="functionalItem" @tap.stop="changePath('./runningListening')">
+        <div
+          class="functionalItem"
+          @tap.stop="changePath('./runningListening')"
+        >
           <div class="functionalItemLeft">
             <image
               lazy-load
@@ -225,189 +244,211 @@
 </template>
 
 <script>
-export default {  
-    name:'home-my',
-    props:['userInfo','level'],
-    data() {
-        return {
-            works:'0', //作品
-        }
+export default {
+  name: "home-my",
+//   props: ["userInfo", "level"],
+  data() {
+    return {
+      isLogin:true,
+      userInfo: {
+        // 用户信息默认初始数据
+        id: "",
+        nickname: "未登录",
+        growthValue: 3562, //等级
+        user_pic: "", //头像
+        works: 0, //作品
+        follows: 0, //关注
+        followeds: 0, //粉丝
+      },
+    };
+  },
+  methods: {
+    changePath(path) {
+      wx.navigateTo({ url: path });
     },
-    methods:{
-        changePath(path){
-          wx.navigateTo({url:path})
-        },
-    }
+  },
+  mounted() {
+    let userInfo = wx.getStorageSync('userDetail');
+    // this.userInfo = JSON.parse(userInfo);
+    console.log('userDetail',userInfo);
+  },
+  computed:{
+      userLevel(){
+        const level = parseInt(this.userInfo.growthValue/1000)
+        console.log('level',level);
+        return level
+      }
+  }
 };
 </script>
 
 <style lang="less">
-.home-my{
-    height: 100%;
-    overflow: scroll;
-    .myInfo{
-        padding: 0 30rpx;
-        height: 250rpx;
-        width: 100vw;
-        box-sizing: border-box;
+.home-my {
+  height: 100%;
+  overflow: scroll;
+  .myInfo {
+    padding: 0 30rpx;
+    height: 250rpx;
+    width: 100vw;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    .headSculpture {
+      width: 25%;
+      height: 150rpx;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .userHeadSculpture {
+        position: relative;
+        image {
+          height: 125rpx;
+          width: 125rpx;
+          border-radius: 50%;
+          z-index: 1;
+        }
+        #wechat {
+          height: 33rpx;
+          width: 33rpx;
+          position: absolute;
+          bottom: 5rpx;
+          right: 0rpx;
+          z-index: 2;
+        }
+      }
+    }
+    .infoDetail {
+      width: 75%;
+      height: 150rpx;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: space-between;
+      .infoDetailTop {
+        height: 45%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .name {
+          height: 50rpx;
+          font-size: 35rpx;
+          font-weight: 400;
+          position: relative;
+          .grade {
+            width: 40rpx;
+            height: 16rpx;
+            font-size: 15rpx;
+            font-weight: 600;
+            position: absolute;
+            top: 10rpx;
+            right: -50rpx;
+            background-color: #d3ab58;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+        .recording {
+          width: 125rpx;
+          height: 40rpx;
+          border: 3rpx solid #d3ab58;
+          border-radius: 70rpx;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          image {
+            height: 30rpx;
+            width: 30rpx;
+            padding-right: 10rpx;
+          }
+          span {
+            color: #d3ab58;
+            font-size: 25rpx;
+          }
+        }
+      }
+      .infoDetailBottom {
+        height: 55%;
+        display: flex;
+        justify-content: space-between;
+        .bottomItem {
+          width: 33%;
+          display: flex;
+          flex-flow: column nowrap;
+          font-weight: 600;
+          font-size: 30rpx;
+          .infoType {
+            font-size: 24rpx;
+            font-weight: 400;
+            color: gray;
+          }
+        }
+      }
+    }
+  }
+  .functionalDomain {
+    padding: 0 30rpx;
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    .areasMy {
+      display: flex;
+      flex-flow: column nowrap;
+      width: 100%;
+      border-bottom: 1rpx solid #f0f0f0;
+      padding-bottom: 35rpx;
+    }
+    .areasCentre {
+      display: flex;
+      flex-flow: column nowrap;
+      width: 100%;
+      border-bottom: 1rpx solid #f0f0f0;
+      padding: 35rpx 0;
+    }
+    .areasListen {
+      display: flex;
+      flex-flow: column nowrap;
+      width: 100%;
+      padding: 35rpx 0;
+    }
+    .functionalItem {
+      height: 75rpx;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      .functionalItemLeft {
+        width: 50%;
+        height: 100%;
         display: flex;
         align-items: center;
-        .headSculpture{
-            width: 25%;
-            height: 150rpx;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            .userHeadSculpture{
-                position: relative;
-                image{
-                    height: 125rpx;
-                    width: 125rpx;
-                    border-radius: 50%;
-                    z-index: 1;
-                }
-                #wechat{
-                    height: 33rpx;
-                    width: 33rpx;
-                    position: absolute;
-                    bottom: 5rpx;
-                    right: 0rpx;
-                    z-index: 2;
-                }
-            }
+        image {
+          width: 40rpx;
+          height: 40rpx;
+          min-width: 40rpx;
+          min-height: 40rpx;
+          margin-right: 36rpx;
         }
-        .infoDetail{
-            width: 75%;
-            height: 150rpx;
-            display: flex;
-            flex-flow: column nowrap;
-            justify-content: space-between;
-            .infoDetailTop{
-                height: 45%;
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                .name{
-                    height: 50rpx;
-                    font-size: 35rpx;
-                    font-weight: 400;
-                    position: relative;
-                    .grade{
-                        width: 40rpx;
-                        height: 16rpx;
-                        font-size: 15rpx;
-                        font-weight: 600;
-                        position: absolute;
-                        top: 10rpx;
-                        right: -50rpx;
-                        background-color: #D3AB58;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                    }
-                }
-                .recording{
-                    width: 125rpx;
-                    height: 40rpx;
-                    border: 3rpx solid #D3AB58;
-                    border-radius: 70rpx;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    image{
-                        height: 30rpx;
-                        width: 30rpx;
-                        padding-right: 10rpx;
-                    }
-                    span{
-                        color: #D3AB58;
-                        font-size: 25rpx;
-                    }
-                }
-            }
-            .infoDetailBottom{
-                height: 55%;
-                display: flex;
-                justify-content: space-between;
-                .bottomItem{
-                    width: 33%;
-                    display: flex;
-                    flex-flow: column nowrap;;
-                    font-weight: 600;
-                    font-size: 30rpx;
-                    .infoType{
-                        font-size: 24rpx;
-                        font-weight: 400;
-                        color: gray;
-                    }
-                }
-            }
+        span {
+          font-size: 30rpx;
         }
-    }
-    .functionalDomain{
-        padding: 0 30rpx;
-        box-sizing: border-box;
+      }
+      .functionalItemRight {
+        width: 50%;
         display: flex;
-        flex-flow: column nowrap;
-        justify-content: space-between;
-        .areasMy{
-            display: flex;
-            flex-flow: column nowrap;
-            width: 100%;
-            border-bottom: 1rpx solid #f0f0f0;
-            padding-bottom: 35rpx;
+        justify-content: flex-end;
+        align-items: center;
+        span {
+          color: #c0bfbf;
+          font-size: 27rpx;
+          padding: 0 10rpx;
         }
-        .areasCentre{
-            display: flex;
-            flex-flow: column nowrap;
-            width: 100%;
-            border-bottom: 1rpx solid #f0f0f0;
-            padding: 35rpx 0;
+        .rightArrow {
+          width: 25rpx;
+          height: 25rpx;
         }
-        .areasListen{
-            display: flex;
-            flex-flow: column nowrap;
-            width: 100%;
-            padding: 35rpx 0;
-        }
-        .functionalItem{
-            height: 75rpx;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            .functionalItemLeft{
-                width: 50%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                image{
-                    width: 40rpx;
-                    height: 40rpx;
-                    min-width: 40rpx;
-                    min-height: 40rpx;
-                    margin-right: 36rpx;
-                }
-                span{
-                    font-size: 30rpx;
-                }
-            }
-            .functionalItemRight{
-                width: 50%;
-                display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                span{
-                    color: #c0bfbf;
-                    font-size: 27rpx;
-                    padding: 0 10rpx;
-                }
-                .rightArrow{
-                    width: 25rpx;
-                    height: 25rpx;
-                }
-            }
-        }
+      }
     }
+  }
 }
 </style>

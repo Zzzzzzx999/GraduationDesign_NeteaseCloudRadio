@@ -34,7 +34,7 @@
                         <span>我的影响力超过</span>
                         <span>{{user.effect}}%</span>
                         <span>的小企鹅</span>
-                        <image src="../static//icon/myPage/右箭头.png"></image>
+                        <image src="../static/icon/myPage/右箭头.png"></image>
                     </div>
                     <div class="level">
                         <div class="grade">
@@ -86,7 +86,6 @@
             </div>
         </div>
         <!-- 底部播放器 -->
-        <player></player>
         <!-- 顶部返回或转发 -->
         <!-- <div class="topRibbon">
             <div class="back" @click="backPath('../pages/home')">
@@ -100,12 +99,10 @@
 </template>
 
 <script>
-import player from "../components/common-player.vue";
 import {userDetail} from "../api/home";
 
 export default {
     name:'myPage',
-    components:{player},
     data() {
         return {
             haveWork:true,

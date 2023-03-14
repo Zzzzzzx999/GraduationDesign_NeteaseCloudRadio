@@ -1,4 +1,4 @@
-const express = require('express')
+/* const express = require('express')
 const router = express.Router()
 
 const userinfo_handler = require('../router_handler/userinfo')
@@ -17,4 +17,4 @@ router.post('/updatepwd',expressJoi(update_password_schema),userinfo_handler.upd
 // 更新头像的路由
 router.post('/update/avatar',expressJoi(update_avatar_schema),userinfo_handler.updateAvatar)
 
-module.exports = router
+module.exports = router */

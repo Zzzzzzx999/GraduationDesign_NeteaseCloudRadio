@@ -32,7 +32,11 @@ exports.regUser = (req,res)=>{
             if(err) return res.cc(err)
             if (results.affectedRows !==1 )  return res.cc('注册用户失败,请稍后再试!')
             // 注册成功
-            res.cc('注册成功！',0)
+            res.send({
+                status:0,
+                message:'注册成功！',
+                profile:results
+            })
         })
     })
     // res.send('reguser OK')
@@ -44,20 +48,22 @@ exports.login = (req,res)=>{
     const sqlStr = 'select * from ev_users where username=?'
     db.query(sqlStr,userinfo.username,(err,results)=>{
         if(err) return res.cc(err)
-        if(results.length !== 1) return res.cc('登陆失败！')
-
+        if(results.length !== 1) return res.cc('账号未注册！')
         const compareResult = bcrypt.compareSync(userinfo.password,results[0].password)
-        if(!compareResult) return res.cc('登录失败!')
+        if(!compareResult) return res.cc('账号或者密码有误噢!')
         // res.send('login OK')
         // 在服务器端生成 Token 的字符串
         const user = {...results[0],password:'',user_pic:''}
         // 对用户的信息进行加密,生成 Token 字符串
         const tokenStr = jwt.sign(user,config.jwtSecretKey,{expiresIn:config.expiresIn})
         // 调用res.send() 将token响应给客户端
+
+
         res.send({
             status:0,
             message:'登陆成功！',
             token:'bearer ' + tokenStr,
+            profile:results[0]
         })
     })
 }

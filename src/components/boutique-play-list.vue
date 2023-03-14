@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="list-content" :class="isShow?'showPaddingBottom':''" scroll-y>
+  <scroll-view class="list-content" scroll-y>
     <block v-for="(item,index) in playList" :key="item.id" >
       <view class="programs" :data-id="item.id" :data-index="index" @tap.stop="goPlayPage">
         <view class="programLeft">
@@ -159,8 +159,5 @@ export default {
             margin-bottom: 40rpx;
         }
     }
-}
-.showPaddingBottom{
-  padding-bottom: 150rpx;
 }
 </style>

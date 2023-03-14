@@ -3,7 +3,7 @@
         <div class="top">
             <div class="searchInput">
                 <input type="text" v-model.trim="searchValue" @confirm="beginSearch" @input="input" placeholder="搜索节目/音乐/主播/广播">
-                <image v-if="searchValue!=''" src="../static//icon/取消.png" @click="searchValue=''"></image>
+                <image v-if="searchValue!=''" src="../../static/icon/取消.png" @click="searchValue=''"></image>
             </div>
             <span @click="backPath('../pages/home')">取消</span>
         </div>
@@ -73,11 +73,11 @@ export default {
         beginSearch(){
             console.log(123);
             wx.setStorageSync('inputValue',this.searchValue)
-            wx.navigateTo({url:'../searchResult?keyword='+this.searchValue})
+            wx.navigateTo({url:'../searchResult/searchResult?keyword='+this.searchValue})
         },
         searchThis(keyword){
             this.searchValue = keyword
-            wx.navigateTo({url:"../searchResult?keyword="+this.searchValue})
+            wx.navigateTo({url:"../searchResult/searchResult?keyword="+this.searchValue})
         },
 
 

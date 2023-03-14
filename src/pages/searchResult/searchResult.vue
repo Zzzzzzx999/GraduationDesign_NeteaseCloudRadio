@@ -3,9 +3,9 @@
         <div class="top">
             <div class="searchInput">
                 <input type="text" v-model="searchValue" @confirm="beginSearch" placeholder="搜索节目/音乐/主播/广播">
-                <image v-if="searchValue!=''" src="../static//icon/取消.png" @click="searchValue=''"></image>
+                <image v-if="searchValue!=''" src="../../static/icon/取消.png" @click="searchValue=''"></image>
             </div>
-            <div class="cancel" @click="changePath('./home')">取消</div>
+            <div class="cancel" @click="changePath('../home')">取消</div>
         </div>
         <div class="content">
             <div class="total">
@@ -16,7 +16,7 @@
                     <div class="programRight">
                         <div class="programTitle">
                             <div class="boutique">
-                                <span id="titleName">{{searchValue}}</span>
+                                <span id="titleName">{{searchTitle}}</span>
                             </div>
                         </div>
                         <div class="programContent">
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <div class="sort">
-                    <image src="../static/icon/沙漏.png"></image>
+                    <image src="../../static/icon/沙漏.png"></image>
                 </div>
             </div>
             <!-- funtionalAreas musicAreas -->
@@ -65,7 +65,8 @@
                 <block v-for="(item,index) in searchResultDJ" :key="index">
                     <div class="programs" :data-id="item.id" :data-index="index" @tap.stop="goPlayPage">
                         <div class="programLeft">
-                            <image mode="aspectFill" :src="item.picUrl"></image>
+                            <image v-if="item.picUrl" mode="aspectFill" :src="item.picUrl"></image>
+                            <image v-else mode="aspectFill" src="https://img1.baidu.com/it/u=992029146,3810177807&fm=253&fmt=auto&app=138&f=JPG?w=667&h=500"></image>
                         </div>
                         <div class="programRight">
                             <div class="programTitle">
@@ -145,9 +146,9 @@
 
 <script>
 const app = getApp()
-import {search} from '../api/home';
-import {getProgram} from "../api/djprogram";
-import player from "../components/common-player.vue";
+import {search} from '../../api/home';
+import {getProgram} from "../../api/djprogram";
+import player from "../../components/common-player.vue";
 export default {
     name:'searchResult',
     components:{player},
@@ -161,6 +162,7 @@ export default {
                 program:false
             },
             showAudio:false,
+            searchTitle:'',
             searchResult:[],
             searchResultDJ:[],
             searchResultPrograms:[],
@@ -169,7 +171,8 @@ export default {
     onShow(){
         this.showAudio = app.globalData.showAudio
         if(wx.getStorageSync('inputValue')){
-            this.searchValue = wx.getStorageSync('inputValue')
+            // this.searchValue = wx.getStorageSync('inputValue')
+            // this.searchTitle = wx.getStorageSync('inputValue')
             wx.setNavigationBarTitle({title:this.searchValue})
             wx.removeStorageSync('inputValue')
         }
@@ -179,6 +182,7 @@ export default {
             console.log(query.keyword);
             wx.setNavigationBarTitle({title:query.keyword})
             this.searchValue = query.keyword
+            this.searchTitle = query.keyword
             this._search('1')       //音乐编号1
             this._search('1009')    //电台编号1009
             this._search('1000')    //歌单编号1000
@@ -229,7 +233,6 @@ export default {
                     console.log('searchResultPrograms',this.searchResultPrograms);
                 })
             }
-            
         },
         chooseSong(e) {
             let {id,index} = e.currentTarget.dataset
@@ -263,6 +266,13 @@ export default {
             uni.navigateTo({
                 url: '/pages/song-list/song-list?id=' + id,
             })
+        },
+        beginSearch(){
+            wx.setNavigationBarTitle({title:this.searchValue})
+            this.searchTitle = this.searchValue
+            this._search('1')       //音乐编号1
+            this._search('1009')    //电台编号1009
+            this._search('1000')    //歌单编号1000
         }
     },
 }

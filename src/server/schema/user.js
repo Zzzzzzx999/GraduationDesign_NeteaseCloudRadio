@@ -7,13 +7,16 @@ const password = joi.string().pattern(/^[\S]{6,12}$/).required()
 // 定义 id,nickname,email 的验证规则
 const id = joi.number().integer().min(1).required()
 const nickname = joi.string().required()
-const email = joi.string().email().required()
+// const email = joi.string().email().required()
+const email = joi.string().required()
 // 定义 avatar 头像的验证规则
 /*
     dataUri()指的是如下格式的字符串数据
     data:image/png;base 64,VE9PTUFOWVNFQ1JFVFM
  */
-const avatar = joi.string().dataUri().required()
+const user_pic = joi.string().required()
+// const avatar = joi.string().dataUri().required()
+const avatar = joi.string().required()
 
 
 // 定义验证注册和登录表单数据的规则对象
@@ -28,6 +31,7 @@ exports.update_userinfo_schema = {
         id,
         nickname,
         email,
+        user_pic
     }
 }
 exports.update_password_schema = {

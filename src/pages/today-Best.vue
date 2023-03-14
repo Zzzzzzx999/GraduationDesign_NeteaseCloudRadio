@@ -103,11 +103,13 @@ export default {
             })
         },
         goPlayPage(e,rid){
+            app.globalData.idDJ = e.currentTarget.dataset.id
             //等待接口响应后处理函数 这里的id要处理 
-            this.id = getProgram(e.currentTarget.dataset.id).then(res=>{
+            getProgram(e.currentTarget.dataset.id).then(res=>{
                 let data = res.programs.map(item => item.mainSong);
                 console.log('mainSongdatadata',data);
                 app.globalData.index = 0
+                app.addDJ(this.myTodayBestDT)
                 app.addSong(data[0].id)
                 app.playList(data)
                 uni.navigateTo({

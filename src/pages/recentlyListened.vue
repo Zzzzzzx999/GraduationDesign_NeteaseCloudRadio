@@ -44,7 +44,7 @@
             <div class="title">
                 <span>大家都在听</span>
             </div>
-            <div class="programs">
+            <!-- <div class="programs">
                 <div class="programLeft">
                     <image mode="aspectFill" src="https://bkimg.cdn.bcebos.com/pic/d50735fae6cd7b8915c84450012442a7d8330eb8?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2U5MzM=,g_7,xp_5,yp_5/format,f_auto"></image>
                 </div>
@@ -81,14 +81,35 @@
                         <span>9.6分 | 播放21.5亿 | 谦儿2016</span>
                     </div>
                 </div>
+            </div> -->
+            <div class="programs" v-for="(item,index) in myTodayBestDT" :key="item.id" :data-id="item.id" :data-index="index" @tap.stop="goPlayPage">
+                    <div class="programLeft">
+                        <image mode="aspectFill" :src="item.picUrl"></image>
+                    </div>
+                    <div class="programRight">
+                        <div class="programTitle">
+                            <div class="boutique">
+                                <span id="Title" v-if="item.category">{{item.category}}</span>
+                                <span id="Name">{{item.name}}</span>
+                            </div>
+                        </div>
+                        <div class="programContent">
+                            <span v-if="item.rcmdText">{{item.rcmdText}}</span>
+                            <span v-else>作者暂无相关描述...</span>
+                        </div>
+                        <!-- <div class="programDetail">
+                            <span>侯杨方</span>
+                        </div> -->
+                    </div>
+                </div>
             </div>
-        </div>
-        <!-- <player></player> -->
+        <player class="audio" v-if="showAudio" :key="new Date().getTime()"></player>
     </div>
 </template>
 
 <script>
 const app = getApp()
+import {getTodayPerfered,getProgram} from "../api/djprogram";
 import {getRecentPlayList} from '../api/home'
 import {getSongDetail} from '../api/songs'
 import player from "../components/common-player.vue";
@@ -100,6 +121,8 @@ export default {
             userInfo:{},
             recentProgram:true, //是否有最近收听节目
             recentPlayList: [], // 用户播放记录
+            myTodayBestDT:[], // 推荐电台
+            showAudio:false,
         }
     },
     onLoad(){
@@ -108,10 +131,23 @@ export default {
             this.userInfo = JSON.parse(userInfo)
             this._getRecentPlayList()
         }
+        this._getTodayPerfered()
     },
     methods: {
-        goPlayer(){
-            wx.navigateTo({url:'../pages/playPage'})
+        goPlayPage(e,rid){
+            app.globalData.idDJ = e.currentTarget.dataset.id
+            //等待接口响应后处理函数 这里的id要处理 
+            getProgram(e.currentTarget.dataset.id).then(res=>{
+                let data = res.programs.map(item => item.mainSong);
+                console.log('mainSongdatadata',data);
+                app.globalData.index = 0
+                app.addDJ(this.myTodayBestDT)
+                app.addSong(data[0].id)
+                app.playList(data)
+                uni.navigateTo({
+                    url: '/pages/song-play/song-play?id=' + data[0].id,
+                })
+            })
         },
         chooseSong(e) {
             let id = e.currentTarget.id
@@ -132,6 +168,20 @@ export default {
                 this.recentPlayList = res.weekData
             })
         },
+        _getTodayPerfered(){
+            getTodayPerfered().then(res=>{
+                console.log('电台个性推荐电台列表',res);
+                this.myTodayBestDT = res.data
+                app.currentDT = this.myTodayBestDT
+                console.log('getTodayPerfered...',this.myTodayBestDT);
+            })
+        },
+    },
+    onShow() {
+        if(app.globalData.id && app.globalData.playList.length > 0) {
+            this.showAudio = true
+            app.globalData.showAudio = this.showAudio
+        }
     },
 }
 </script>
@@ -194,18 +244,16 @@ export default {
         margin: 40rpx 0;
     }
     .everyoneIsListening{
-        display: flex;
-        align-items: center;
-        flex-flow: column nowrap;
-        margin-bottom: 50rpx;
+        margin-bottom: 100rpx;
         .title{
+            text-align: center;
             font-size: 38rpx;
             font-weight: 600;
-            margin: 40rpx 0;
+            margin: 25rpx 0 60rpx 0;
         }
     }
     // 节目
-    .programs{
+    /* .programs{
         display: flex;
         align-items: center;
         margin: 20rpx 40rpx;
@@ -226,6 +274,80 @@ export default {
                 display: flex;
                 flex-flow: row wrap;
                 align-items: center;
+                .boutique{
+                    font-size: 28rpx;
+                    color: black;
+                    font-weight: 300;
+                }
+                .programName{
+                    margin-left: 20rpx;
+                    font-size: 35rpx;
+                    font-weight: 500;
+                }
+                #Title{
+                    font-size: 24rpx;
+                    color: black;
+                    border: 3rpx solid black;
+                    border-radius: 8rpx;
+                    font-weight: 300;
+                    padding: 0 6rpx;
+                }
+                #Name{
+                    margin-left: 20rpx;
+                    font-size: 30rpx;
+                    font-weight: 600;
+                }
+                .empty{
+                    margin-left: 100rpx;
+                    color: #D3AB58;
+                    border: 1rpx solid #a78034;
+                    border-radius: 10rpx;
+                    padding: 5rpx 10rpx;
+                    font-size: 28rpx;
+                }
+            }
+            .programContent{
+                font-size: 25rpx;
+                margin: 15rpx 0;
+                color: grey;
+                overflow: hidden;
+                white-space: wrap;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+            }
+            .programDetail{
+                color: grey;
+                font-size: 25rpx;
+            }
+        }
+        .programsHeader{
+            margin-bottom: 40rpx;
+        }
+    } */
+    .programs{
+        display: flex;
+        align-items: center;
+        margin: 20rpx 40rpx;
+        .programLeft{
+            width: 29%;
+            image{
+                height: 180rpx;
+                width: 180rpx;
+                border-radius: 15rpx;
+            }
+        }
+        .programRight{
+            height: 180rpx;
+            width: 71%;
+            margin-left: 30rpx;
+            display: flex;
+            flex-flow: column nowrap;
+            .programTitle{
+                display: flex;
+                flex-flow: row wrap;
+                align-items: flex-start;
                 .boutique{
                     font-size: 28rpx;
                     color: black;

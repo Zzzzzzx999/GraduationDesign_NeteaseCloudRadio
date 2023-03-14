@@ -6,28 +6,30 @@
 	      欢迎回来！
 	    </view>
 	    <view class="input-content">
-	      <view v-if="!change" class="input-item">
+	      <view class="input-item">
 	        <text class="tit">手机号码</text>
 	        <input v-model="phone" type="text" placeholder="请输入手机号码"/>
 	      </view>
-	      <view  v-else class="input-item">
-	        <text class="tit">用户名</text>
-	        <input v-model="username" type="text" placeholder="请输入用户名"/>
-	      </view>
-	      <view class="input-item">
+	      <view v-if="!change" class="input-item">
 	        <text class="tit">密码</text>
 	        <input v-model="pwd" type="password" placeholder="请输入密码"/>
 	      </view>
+		  <view v-else class="input-item">
+				<text class="tit">验证码</text>
+				<view style="width:100%">
+					<input style="width: 60%;display: inline-block;" v-model="captcha" maxlength="4" type="number" placeholder="请输入验证码"/>
+					<button class="confim-num" @click="getConfimNum">{{count>0?'('+count+'s)':'获取验证码'}}</button>
+				</view>
+		  </view>
 	    </view>
 	    <button class="confirm-btn" @click="login">登录</button>
 	    <view class="forget-section" @click="changeLoginType">
-	      {{change?'切换手机密码登陆':'切换用户名登录'}}
+	      {{change?'切换手机密码登陆':'切换成手机验证码登录'}}
 	    </view>
 	  </view>
 	  <view class="register-section">
 	    还没有账号?
-	    <div class="inline-block">游客登陆</div>
-		<div class="inline-block" @click="goReguser">马上注册</div>
+	    <text>游客登陆</text><text >马上注册</text>
 		<!-- <view>
 			<text>游客登陆</text>
 		</view> -->
@@ -36,118 +38,122 @@
 </template>
 
 <script>
-	import {logins,visitorLogin} from '../../api/home'
+	import {logins, sendCaptcha,visitorLogin} from '../../api/home'
 	import {login} from '../../api/serverAPI/user'
 	export default {
 		data() {
 			return {
 				phone: '',
 				pwd: '',
-				username: '',
+				captcha: '',
 				change: true,
+				count: 0
 			}
 		},
 		methods: {
 			changeLoginType() {
 				this.change = !this.change
-				this.username = ''
+				this.captcha = ''
 				this.pwd = ''
 			},
-			checkPwd(){
-				let {pwd,username,phone} = this
-				let params = {}
-				if(!this.change) {
-					params = {
-						phone,
-						password: pwd,
-						islogin: true
-					}
-				} else {
-					params = {
-						username,
-						password: pwd,
-						islogin: true
-					}
-				}
-				if (!pwd) {
-					wx.showToast({	
-						title: '请输入密码',
+			getConfimNum() {
+				if(!this.phone) {
+					wx.showToast({
+						title: '请输入手机号',
 						icon: 'none'
 					})
 					return
-				}else{
-					console.log('@',params);
-					login(params).then(res => {
-						if(res.status === 1) {
-							wx.showToast({
-								title: res.msg,
-								icon: 'none'
-							})
-						} else if(res.status === 0){
-							wx.setStorage({
-								data: res.profile,
-								key: 'userDetail',
-							})
-							wx.redirectTo({
-								url: '../home',
-							})
-							console.log('登录成功！');
-						}else{
-							if (res.message) {
-								wx.showToast({
-									title: res.message,
-									icon: 'none'
-								})
-							}else{
-								wx.showToast({
-									title: '未知错误！',
-									icon: 'none'
-								})
-							}
-							
-							
-						}
-					})
 				}
+				this.count = 60
+				let self = this
+				let timer = setInterval(() => {
+					if(self.count == 0) {
+						clearInterval(timer)
+					}
+					self.count = --self.count
+				}, 1000)
+				sendCaptcha({phone:this.phone}).then(res => {
+					wx.showToast({
+						title: '已发送验证码',
+						icon: 'none'
+					})
+				})
 			},
 			login() {
-				let {phone, username} = this
-				if (!this.change) {
-					if (!phone) {
-						wx.showToast({
-							title: '请输入手机号',
+				let {phone, pwd, captcha} = this
+				if(!phone) {
+					wx.showToast({
+						title: '请输入手机号',
+						icon: 'none'
+					})
+					return
+				} else {
+					let phoneReg = /^1(3|4|5|6|7|8|9)\d{9}$/
+					if (!phoneReg.test(phone)) {
+						wx.showToast({	
+							title: '请输入正确的手机号',
 							icon: 'none'
 						})
 						return
-					}else{
-						let phoneReg = /^1(3|4|5|6|7|8|9)\d{9}$/
-						if (!phoneReg.test(phone)) {
-							wx.showToast({	
-								title: '请输入正确的手机号',
+					} else {
+						if(!pwd && !this.change) {
+							wx.showToast({
+								title: '请输入密码',
 								icon: 'none'
 							})
 							return
-						}else{
-							this.checkPwd()
+						} else if(!captcha && this.change) {
+							wx.showToast({
+								title: '请输入验证码',
+								icon: 'none'
+							})
+						} else {
+							let params = {}
+							if(this.change) {
+								params = {
+									phone,
+									captcha,
+									islogin: true
+								}
+							} else {
+								params = {
+									phone,
+									password: pwd,
+									islogin: true
+								}
+							}
+							login(params).then(res => {
+								if(res.code === 502) {
+									wx.showToast({
+										title: res.msg,
+										icon: 'none'
+									})
+								} else if(res.code === 400) {
+									wx.showToast({
+										title: '手机号不存在',
+										icon: 'none'
+									})
+								} else if(res.code ===200){
+									wx.setStorage({
+										data: JSON.stringify(res.profile),
+										key: 'userInfo',
+									})
+									wx.redirectTo({
+										url: '/src/pages/home.vue',
+									})
+									console.log('登录成功！');
+								}else{
+									console.log('未知错误！');
+									wx.showToast({
+										title: '未知错误！',
+										icon: 'none'
+									})
+								}
+							})
 						}
-					}
-				}else{
-					if (!username) {
-						wx.showToast({
-							title: '请输入用户名',
-							icon: 'none'
-						})
-						return
-					}else{
-						this.checkPwd()
 					}
 				}
 			},
-			goReguser(){
-				wx.redirectTo({
-					url: '../reguser/reguser',
-				})
-			}
 		},
 		created() {
 			/* uni.showModal({
@@ -251,11 +257,15 @@
   text-align: center;
 
 }
-.register-section .inline-block{
-	display: inline-block;
+.register-section text{
   color: #4399fc;
   margin-left: 10rpx;
 }
 
+.confim-num {
+	display: inline-block;
+	width: 40%;
+	font-size: 24rpx;
+}
 
 </style>

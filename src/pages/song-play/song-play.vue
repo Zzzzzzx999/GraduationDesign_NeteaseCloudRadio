@@ -117,13 +117,33 @@
 			}, 300);
 			if(app.globalData.isSameDJ) {
 				if (app.globalData.isSame){
-					getSongDetail(this.pid || app.globalData.id).then(res => {
+					if(app.globalData.backgroundAudioManager.src && app.globalData.backgroundAudioManager.title) {
+						console.log('@@@@11');
+						getSongDetail(this.pid || app.globalData.id).then(res => {
+							this.dt = moment(res.songs[0].dt).format('mm:ss')
+							this.songInfo = res.songs[0]
+							this.playList = app.globalData.playList
+						})
+						app.globalData.backgroundAudioManager.play()
+					}else {
+						console.log('@@@@22');
+						getSongDetail(this.pid || app.globalData.id).then(res => {
+							this.dt = moment(res.songs[0].dt).format('mm:ss')
+							this.songInfo = res.songs[0]
+							this.playList = app.globalData.playList
+							// this._getUrl(app.globalData.id)
+						})
+					}
+
+					/* getSongDetail(this.pid || app.globalData.id).then(res => {
 						this.dt = moment(res.songs[0].dt).format('mm:ss')
 						this.songInfo = res.songs[0]
 						this.playList = app.globalData.playList
 					})
 					console.log('999');
-				}else if(app.globalData.backgroundAudioManager.src && app.globalData.backgroundAudioManager.title) {
+					app.globalData.backgroundAudioManager.play() */
+				}
+				/* else if(app.globalData.backgroundAudioManager.src && app.globalData.backgroundAudioManager.title) {
 					getSongDetail(this.pid || app.globalData.id).then(res => {
 						this.dt = moment(res.songs[0].dt).format('mm:ss')
 						this.songInfo = res.songs[0]
@@ -131,7 +151,8 @@
 					})
 					console.log('@@@@11');
 					app.globalData.backgroundAudioManager.play()
-				}else {
+				} */
+				/* else {
 					app.globalData.backgroundAudioManager = uni.getBackgroundAudioManager()
 					getSongDetail(this.pid || app.globalData.id).then(res => {
 						console.log('@@@@@2',app.globalData.playList);
@@ -142,20 +163,9 @@
 						this._getUrl(this.pid ||app.globalData.id)
 					})
 					console.log('@@@@@2');
-				}
-				/* if (app.globalData.isSame) {
-					app.watch(this.watchId,'id') 
-				}else{
-					getSongDetail(this.pid).then(res => {
-						this.dt = moment(res.songs[0].dt).format('mm:ss')
-						this.songInfo = res.songs[0]
-						this.playList = app.globalData.playList
-						this._playListSongInfo()
-						this._getUrl(this.pid)
-					})
-					console.log('@@@@@3');
 				} */
 			} else {
+				console.log('@@@@@3');
 				app.globalData.backgroundAudioManager = uni.getBackgroundAudioManager()
 				getSongDetail(this.pid || app.globalData.id).then(res => {
 					this.dt = moment(res.songs[0].dt).format('mm:ss')
@@ -163,7 +173,6 @@
 					console.log('songInfo1',this.songInfo);
 					this.playList = app.globalData.playList
 					this._getUrl(app.globalData.id)
-					console.log('@@@@@4');
 				})
 			}
 			// 获取歌词
@@ -360,7 +369,7 @@
 					this.getSongInfo(res.songs[0])
 				})
 				this._playListSongInfo()
-				this.timeUpdate()
+				// this.timeUpdate()
 			},
 			//歌曲播放函数
 			async getSongInfo(info) {
@@ -376,7 +385,7 @@
 			switchSong (e) {
 				let type = e.currentTarget.id
 				this.changeSong(type)
-				this.timeUpdate()
+				// this.timeUpdate()
 			},
 			// 点击改变进度条
 			changeProgress(e) {
@@ -414,7 +423,7 @@
 				getSongDetail(id).then(res => {
 					this.getSongInfo(res.songs[0])
 				})
-				this.timeUpdate()
+				// this.timeUpdate()
 			},
 			timeUpdate(){
 				app.globalData.backgroundAudioManager.onTimeUpdate((e)=> {

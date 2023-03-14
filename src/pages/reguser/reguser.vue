@@ -3,14 +3,10 @@
 	  <view class="wrapper">
 	    <view class="left-top-sign">LOGIN</view>
 	    <view class="welcome">
-	      欢迎回来！
+	      拥有一个自己的账号吧！
 	    </view>
 	    <view class="input-content">
-	      <view v-if="!change" class="input-item">
-	        <text class="tit">手机号码</text>
-	        <input v-model="phone" type="text" placeholder="请输入手机号码"/>
-	      </view>
-	      <view  v-else class="input-item">
+	      <view class="input-item">
 	        <text class="tit">用户名</text>
 	        <input v-model="username" type="text" placeholder="请输入用户名"/>
 	      </view>
@@ -19,79 +15,69 @@
 	        <input v-model="pwd" type="password" placeholder="请输入密码"/>
 	      </view>
 	    </view>
-	    <button class="confirm-btn" @click="login">登录</button>
-	    <view class="forget-section" @click="changeLoginType">
-	      {{change?'切换手机密码登陆':'切换用户名登录'}}
-	    </view>
+	    <button class="confirm-btn" @click="reguser">注册</button>
 	  </view>
 	  <view class="register-section">
-	    还没有账号?
-	    <div class="inline-block">游客登陆</div>
-		<div class="inline-block" @click="goReguser">马上注册</div>
-		<!-- <view>
-			<text>游客登陆</text>
-		</view> -->
+		<div class="inline-block">游客登陆</div>
+		<div class="inline-block" @click="goLogin">返回登陆页面</div>
 	  </view>
 	</view>
 </template>
 
 <script>
-	import {logins,visitorLogin} from '../../api/home'
-	import {login} from '../../api/serverAPI/user'
+	import {reguser} from '../../api/serverAPI/user'
 	export default {
 		data() {
 			return {
-				phone: '',
 				pwd: '',
 				username: '',
-				change: true,
 			}
 		},
 		methods: {
-			changeLoginType() {
-				this.change = !this.change
-				this.username = ''
-				this.pwd = ''
+			goLogin(){
+				wx.redirectTo({
+					url: '../login/login',
+				})
 			},
-			checkPwd(){
-				let {pwd,username,phone} = this
-				let params = {}
-				if(!this.change) {
-					params = {
-						phone,
-						password: pwd,
-						islogin: true
-					}
-				} else {
-					params = {
-						username,
-						password: pwd,
-						islogin: true
-					}
-				}
-				if (!pwd) {
-					wx.showToast({	
+			reguser() {
+				let {pwd, username} = this
+				if (!username) {
+					wx.showToast({
+						title: '请输入用户名',
+						icon: 'none'
+					})
+					return
+				}else if(!pwd) {
+					wx.showToast({
 						title: '请输入密码',
 						icon: 'none'
 					})
 					return
 				}else{
-					console.log('@',params);
-					login(params).then(res => {
+					let params = {}
+					params = {
+						username,
+						password: pwd,
+					}
+					reguser(params).then(res => {
 						if(res.status === 1) {
 							wx.showToast({
-								title: res.msg,
+								title: res.message,
 								icon: 'none'
 							})
 						} else if(res.status === 0){
+							wx.showToast({
+								title: res.message,
+								icon: 'none'
+							})
 							wx.setStorage({
-								data: res.profile,
-								key: 'userDetail',
+								data: res.profile.insertId,
+								key: 'userId',
 							})
 							wx.redirectTo({
-								url: '../home',
+								url: '../userInfo/userInfo',
 							})
-							console.log('登录成功！');
+							console.log('注册成功！');
 						}else{
 							if (res.message) {
 								wx.showToast({
@@ -104,50 +90,10 @@
 									icon: 'none'
 								})
 							}
-							
-							
 						}
 					})
 				}
 			},
-			login() {
-				let {phone, username} = this
-				if (!this.change) {
-					if (!phone) {
-						wx.showToast({
-							title: '请输入手机号',
-							icon: 'none'
-						})
-						return
-					}else{
-						let phoneReg = /^1(3|4|5|6|7|8|9)\d{9}$/
-						if (!phoneReg.test(phone)) {
-							wx.showToast({	
-								title: '请输入正确的手机号',
-								icon: 'none'
-							})
-							return
-						}else{
-							this.checkPwd()
-						}
-					}
-				}else{
-					if (!username) {
-						wx.showToast({
-							title: '请输入用户名',
-							icon: 'none'
-						})
-						return
-					}else{
-						this.checkPwd()
-					}
-				}
-			},
-			goReguser(){
-				wx.redirectTo({
-					url: '../reguser/reguser',
-				})
-			}
 		},
 		created() {
 			/* uni.showModal({

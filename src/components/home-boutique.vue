@@ -12,6 +12,7 @@ import {getProgramList,getNewRadioList,getProgram,getHotRadioList,getPaidBoutiqu
 import tabBar from 'components/boutique-nav-tabbar'
 import playList from 'components/boutique-play-list'
 import banner from 'components/boutique-banner'
+import { getBanner } from '../api/serverAPI/user';
 const app = getApp()
 
 export default {
@@ -72,6 +73,13 @@ export default {
                 this.banners = res.data
                 console.log('banners',res);
             })
+           /*  setTimeout(() => {
+                console.log('this.banners',this.banners);
+                getBanner(this.banners[1]).then(res=>{
+                    console.log('bannersbanners@@',res);
+                }) 
+            }, 500); */
+            
         },
         _getHotRadioList(type){
             getHotRadioList(type).then(res=>{
@@ -110,7 +118,7 @@ export default {
         },
         goPlayPage(e,rid){
             //等待接口响应后处理函数 这里的id要处理 
-            this.id = getProgram(e.currentTarget.dataset.id).then(res=>{
+            getProgram(e.currentTarget.dataset.id).then(res=>{
                 let data = res.programs.map(item => item.mainSong);
                 console.log('mainSongdatadata',data);
                 app.globalData.index = 0
