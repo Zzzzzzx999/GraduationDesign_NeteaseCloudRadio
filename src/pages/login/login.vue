@@ -80,7 +80,7 @@
 					login(params).then(res => {
 						if(res.status === 1) {
 							wx.showToast({
-								title: res.msg,
+								title: res.message,
 								icon: 'none'
 							})
 						} else if(res.status === 0){
@@ -88,6 +88,7 @@
 								data: res.profile,
 								key: 'userDetail',
 							})
+							wx.setStorageSync('token',res.token)
 							wx.redirectTo({
 								url: '../home',
 							})

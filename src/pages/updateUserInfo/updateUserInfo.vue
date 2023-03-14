@@ -1,32 +1,32 @@
 <template>
   <view class="container">
     <view class="wrapper">
-      <view class="left-top-sign">LOGIN</view>
-      <view class="welcome"> 完善信息！ </view>
+      <view class="left-top-sign">Edit</view>
+      <view class="welcome"> 编辑资料 </view>
       <button
         class="avatar-wrapper"
         open-type="chooseAvatar"
         @chooseavatar="onChooseAvatar"
       >
-        <image class="avatar" :src="user_pic"></image>
+        <image class="avatar" :src="userInfo.user_pic"></image>
       </button>
       <view class="input-content">
         <view class="input-item">
           <label for="nickname">
-            <text class="tit">昵称</text>
-            <input v-model="nickname" type="text" placeholder="请输入昵称" />
+            <text class="tit">昵称</text><span class="required">*</span>
+            <input name="nickname" v-model="userInfo.nickname" type="text" placeholder="请输入昵称" />
           </label>
         </view>
         <view class="input-item">
           <label for="email">
-            <text class="tit">邮箱</text>
-            <input v-model="email" type="text" placeholder="请输入邮箱" />
+            <text class="tit">邮箱</text><span class="required">*</span>
+            <input name="email" v-model="userInfo.email" type="text" placeholder="请输入邮箱" />
           </label>
         </view>
         <view class="input-item">
           <label for="signature">
             <text class="tit">个性签名</text>
-            <input name="signature" v-model="signature" type="text" placeholder="请输入个性签名" />
+            <input name="signature" v-model="userInfo.signature" type="text" placeholder="请输入个性签名" />
           </label>
         </view>
       </view>
@@ -36,23 +36,26 @@
 </template>
 
 <script>
-const defaultAvatarUrl = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
-import { updateUserinfo,getUserinfo } from "../../api/serverAPI/userInfo";
+import { object } from '@dcloudio/vue-cli-plugin-uni/packages/postcss/tags';
+const defaultuser_pic = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
+import { updateUserinfo } from "../../api/serverAPI/userInfo";
 export default {
   data() {
     return {
-      user_pic: defaultAvatarUrl,
-      nickname: "",
-      userId: "",
-      email:'', 
-      signature:'',
+        userInfo:{
+            user_pic: '',
+            nickname: "",
+            userId: "",
+            email:'', 
+            signature:'', 
+        },
     };
   },
   methods: {
     updateUserInfo() {
-      let { user_pic, nickname, userId,email,signature } = this;
+      let { user_pic, nickname, userId,email,signature } = this.userInfo;
       if (!signature) {
-        signature = '暂无介绍'
+          signature = '暂无介绍'
       }
       if (!user_pic) {
         wx.showToast({
@@ -77,13 +80,12 @@ export default {
         params = {
           id: userId,
           user_pic,
-          nickname: nickname,
+          nickname,
           email,
           signature
         };
-        console.log("1", params);
-        // params = JSON.stringify(params);
         updateUserinfo(params).then((res) => {
+            console.log(res.profile);
           if (res.status === 1) {
             wx.showToast({
               title: res.message,
@@ -91,21 +93,33 @@ export default {
             });
           } else if (res.status === 0) {
             wx.showToast({
-              title: "更新信息成功！",
+              title: "修改成功！",
               icon: "none",
             });
-            //查询用户信息
-            console.log('userId',userId);
-            getUserinfo(userId).then((res=>{
-              wx.setStorage({
-                data: res.profile[0],
+            let oldUserDetail = wx.getStorageSync('userDetail')
+            Object.defineProperties(oldUserDetail,{
+                user_pic:{
+                    value:res.profile.user_pic
+                },
+                nickname:{
+                    value:res.profile.nickname
+                },
+                email:{
+                    value:res.profile.email
+                },
+                signature:{
+                    value:res.profile.signature
+                },
+            })
+            let userDetail = oldUserDetail
+            wx.setStorage({
+                data: userDetail,
                 key: 'userDetail',
-              })
-            }))
-            wx.redirectTo({
-              url: "../home",
+            })
+            wx.navigateBack({
+              delta: 1,
             });
-            console.log("登录成功！");
+            console.log("修改成功！");
           } else {
             if (res.message) {
               wx.showToast({
@@ -123,15 +137,18 @@ export default {
       }
     },
     onChooseAvatar(e) {
-      console.log(e.detail);
-      this.user_pic = e.detail.avatarUrl;
+      this.userInfo.user_pic = e.detail.user_pic;
     },
     formSubmit(e) {
       console.log("昵称：", e.detail.value.nickname);
     },
   },
-  mounted() {
-    this.userId = wx.getStorageSync("userId");
+  onLoad(option) {
+      console.log(option);
+    // this.userInfo = JSON.parse(option.userInfo)
+    this.userInfo = wx.getStorageSync('userDetail')
+    console.log(this.userInfo);
+    this.userInfo.userId = wx.getStorageSync("userId");
   },
 };
 </script>
@@ -165,9 +182,9 @@ export default {
 }
 .input-item {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 30rpx;
   background: #f8f6fc;
   height: 120rpx;
@@ -190,6 +207,7 @@ export default {
   color: #303133;
   width: 100%;
 }
+
 .confirm-btn {
   width: 630rpx !important;
   height: 76rpx;
@@ -253,5 +271,10 @@ export default {
 }
 .weui-input {
   flex: 6;
+}
+.required{
+    content: ' *';
+    color: red;
+    font-size: 150%;
 }
 </style>

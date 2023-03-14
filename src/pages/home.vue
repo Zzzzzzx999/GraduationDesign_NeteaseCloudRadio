@@ -46,13 +46,24 @@ export default {
             ],
             level:{},
             timer:'',
+            userInfo: {
+                // 用户信息默认初始数据
+                id: "",
+                nickname: "未登录",
+                growthValue: 3562, //等级
+                user_pic: "", //头像
+                works: 0, //作品
+                follows: 0, //关注
+                followeds: 0, //粉丝
+            },
         }
     },
     onShow() {
         if(app.globalData.id && app.globalData.playList.length > 0) {
             this.showAudio = true
             app.globalData.showAudio = this.showAudio
-        }    
+        }
+        this.userInfo = wx.getStorageSync('userDetail')
     },    
     onLoad(query){
         console.log('1',query);
@@ -105,6 +116,7 @@ export default {
         getUserInfo(){
             let userInfo = wx.getStorageSync('userDetail')
             this.userInfo = userInfo
+            this.level = parseInt(this.userInfo.growthValue/1000)
             /* let userInfo = wx.getStorageSync('userInfo')
             if(userInfo) {
                 this.userInfo = JSON.parse(userInfo)

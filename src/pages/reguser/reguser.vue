@@ -14,6 +14,10 @@
 	        <text class="tit">密码</text>
 	        <input v-model="pwd" type="password" placeholder="请输入密码"/>
 	      </view>
+	      <view class="input-item">
+	        <text class="tit">确认密码</text>
+	        <input v-model="pwdAgain" type="password" placeholder="请输入密码"/>
+	      </view>
 	    </view>
 	    <button class="confirm-btn" @click="reguser">注册</button>
 	  </view>
@@ -29,8 +33,9 @@
 	export default {
 		data() {
 			return {
-				pwd: '',
 				username: '',
+				pwd: '',
+				pwdAgain:''
 			}
 		},
 		methods: {
@@ -40,16 +45,22 @@
 				})
 			},
 			reguser() {
-				let {pwd, username} = this
+				let {pwd, username,pwdAgain} = this
 				if (!username) {
 					wx.showToast({
 						title: '请输入用户名',
 						icon: 'none'
 					})
 					return
-				}else if(!pwd) {
+				}else if(!pwd || !pwdAgain) {
 					wx.showToast({
 						title: '请输入密码',
+						icon: 'none'
+					})
+					return
+				}else if(!(pwd === pwdAgain)) {
+					wx.showToast({
+						title: '两次密码不一致，检查一下',
 						icon: 'none'
 					})
 					return

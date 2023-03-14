@@ -4,15 +4,16 @@ const bcrypt = require('bcryptjs')
 
 // 获取用户基本信息的处理函数
 exports.getUserInfo = (req,res)=>{
-    const sqlStr = 'select id,username,nickname,email,user_pic from ev_users where id=?'
+    const sqlStr = 'select * from ev_users where id=?'
     // const sqlStr = 'select * from ev_users'
-    db.query(sqlStr,req.user.id,(err,results)=>{
+    console.log(req);
+    db.query(sqlStr,req.query.id,(err,results)=>{
         if(err) return res.cc(err)
         if(results.length !== 1) return res.cc('获取用户信息失败！')
         res.send({
             status:0,
             message:'获取用户信息成功！',
-            data:results
+            profile:results
         })
     })
 }
@@ -29,7 +30,7 @@ exports.updateUserInfo = (req,res)=>{
         res.send({
             status:0,
             message:'更新用户信息成功！',
-            profile:userInfo
+            profile:req.body
         })
     })
 }

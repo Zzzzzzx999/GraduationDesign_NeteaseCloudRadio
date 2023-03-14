@@ -5,31 +5,9 @@
             <span>添加“播放最近收听”到Siri</span>
             <image id="right" src="../static/icon/homeIcon/右箭头.png"></image>
         </div>
-        <div class="notRecentPrograms" v-if="!recentProgram">
-            <image src="../static/icon/Time-Folder.png"></image>
-            <div class="recent">
-                <span>暂无最近收听</span>
-            </div>
-            <div class="more">
-                <span>去收听更多精彩节目</span>
-            </div>
-        </div>
-        <div class="recentPrograms" v-if="recentProgram">
-            <div class="programs">
-                <div class="programLeft">
-                    <image mode="aspectFill" src="https://img2.baidu.com/it/u=1719968675,2457840328&fm=253&fmt=auto&app=138&f=JPEG?w=998&h=500"></image>
-                </div>
-                <div class="programRight programsHeader">
-                    <div class="programTitle">
-                        <span>最近收听的节目</span>
-                        <div class="empty" @click="recentProgram=false">
-                            <span>清空</span>
-                        </div>
-                    </div>
-                    <div class="programContent">
-                        <span>共4集</span>
-                    </div>
-                </div>
+        <div class="recentPrograms everyoneIsListening">
+            <div class="title">
+                <span>最近收听的音乐</span>
             </div>
             <view class="scroll-record">
                 <block v-for="item in recentPlayList" :key="item.song.id">
@@ -119,7 +97,6 @@ export default {
     data() {
         return {
             userInfo:{},
-            recentProgram:true, //是否有最近收听节目
             recentPlayList: [], // 用户播放记录
             myTodayBestDT:[], // 推荐电台
             showAudio:false,

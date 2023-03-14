@@ -169,7 +169,7 @@
       </div>
     </div>
     <div class="logOut">
-      <span @click="changePath('./index/index')">退出登录</span>
+      <span @click="toLogin">退出登录</span>
     </div>
     <player class="audio" v-if="showAudio"></player>
   </div>
@@ -200,6 +200,11 @@ export default {
   methods:{
     changePath(path){
       wx.redirectTo({url:path})
+    },
+    toLogin() {
+      wx.reLaunch({
+        url: './login/login',
+      })
     },
     goPlayer(){
         // const backgroundAudioManager = wx.getBackgroundAudioManager()

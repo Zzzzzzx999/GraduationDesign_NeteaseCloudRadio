@@ -8,15 +8,16 @@ export function updateUserinfo(params) {
         id: params.id,
         nickname: params.nickname,
         email: params.email,
-        user_pic: params.avatarUrl
+        user_pic: params.user_pic,
+        signature: params.signature,
     }
   })
 }
 // 获取用户信息
 export function getUserinfo(id) {
   return request({
-    url: '/api/login',
-    method: 'post',
+    url: '/my/userinfo',
+    method: 'get',
     data:{
         id
     }

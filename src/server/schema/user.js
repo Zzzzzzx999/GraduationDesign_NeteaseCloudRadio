@@ -17,6 +17,7 @@ const email = joi.string().required()
 const user_pic = joi.string().required()
 // const avatar = joi.string().dataUri().required()
 const avatar = joi.string().required()
+const signature = joi.string()
 
 
 // 定义验证注册和登录表单数据的规则对象
@@ -31,7 +32,8 @@ exports.update_userinfo_schema = {
         id,
         nickname,
         email,
-        user_pic
+        user_pic,
+        signature
     }
 }
 exports.update_password_schema = {

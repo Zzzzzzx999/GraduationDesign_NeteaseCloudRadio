@@ -80,6 +80,12 @@
 			}
 		},
 		{
+			"path": "pages/updateUserInfo/updateUserInfo",
+			"style": {
+				"navigationBarTitleText": "编辑资料"
+			}
+		},
+		{
 			"path": "pages/today-Best",
 			"style": {
 				"navigationBarTitleText": "今日优选"

@@ -1,6 +1,6 @@
 <template>
   <div class="home-my">
-    <div class="myInfo" @click="changePath('./myPage')">
+    <div class="myInfo" @click="changePath('./myPage?userInfo='+JSON.stringify(userInfo)+'&level='+level)">
       <div class="headSculpture">
         <div class="userHeadSculpture">
           <!-- <image lazy-load :src="loginWay !== ''?'https://img1.baidu.com/it/u=2145784900,2865107303&fm=253&fmt=auto&app=138&f=JPG?w=500&h=500':'../static/icon/homeIcon/未登录-头像.png'"></image> -->
@@ -22,7 +22,7 @@
           <div class="name">
             <span>{{ userInfo.nickname }}</span>
             <div class="grade">
-              <span>LV{{ userLevel }}</span>
+              <span>LV{{ level }}</span>
             </div>
           </div>
           <div class="recording" @tap.stop>
@@ -246,20 +246,10 @@
 <script>
 export default {
   name: "home-my",
-//   props: ["userInfo", "level"],
+  props: ["userInfo", "level"],
   data() {
     return {
       isLogin:true,
-      userInfo: {
-        // 用户信息默认初始数据
-        id: "",
-        nickname: "未登录",
-        growthValue: 3562, //等级
-        user_pic: "", //头像
-        works: 0, //作品
-        follows: 0, //关注
-        followeds: 0, //粉丝
-      },
     };
   },
   methods: {
@@ -268,17 +258,11 @@ export default {
     },
   },
   mounted() {
-    let userInfo = wx.getStorageSync('userDetail');
+    /* let userInfo = wx.getStorageSync('userDetail');
     // this.userInfo = JSON.parse(userInfo);
-    console.log('userDetail',userInfo);
+    console.log('userDetail',userInfo); */
   },
-  computed:{
-      userLevel(){
-        const level = parseInt(this.userInfo.growthValue/1000)
-        console.log('level',level);
-        return level
-      }
-  }
+  
 };
 </script>
 

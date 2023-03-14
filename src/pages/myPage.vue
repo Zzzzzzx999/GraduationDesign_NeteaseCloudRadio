@@ -5,34 +5,34 @@
         </div>
         <div class="backGround2">
             <div class="myPageContent">
-                <div class="headSculpture">
-                    <image :src=userInfo.avatarUrl></image>
+                <div class="headSculpture" @click="editInformation">
+                    <image :src="userInfo.user_pic"></image>
                 </div>
                 <div class="infoDetail">
                     <div class="name">
                         <span>{{userInfo.nickname}}</span>
                         <div class="grade">
-                            <span v-if="level.level">LV{{ level.level }}</span>
+                            <span v-if="user.level">LV{{ user.level}}</span>
                             <span v-else>LV0</span>
                         </div>
                     </div>
                     <div class="myInfo">
                         <div class="myFans myInfoItem">
                             <span>粉丝</span>
-                            <span id="fansAndGifts">{{userInfo.follows}}</span>
+                            <span id="fansAndGifts">{{userInfo.followeds}}</span>
                         </div>
                         <div class="myGifts myInfoItem">
                             <span>礼物</span>
-                            <span id="fansAndGifts">0</span>
+                            <span id="fansAndGifts">{{userInfo.giftsReceived}}</span>
                         </div>
                     </div>
                     <div class="myIntroduce">
-                        <span v-if="user.signature">{{user.signature}}</span>
+                        <span v-if="userInfo.signature">{{userInfo.signature}}</span>
                         <span v-else>暂无介绍</span>
                     </div>
                     <div class="myInfluence">
                         <span>我的影响力超过</span>
-                        <span>{{user.effect}}%</span>
+                        <span>{{userEffect}}%</span>
                         <span>的小企鹅</span>
                         <image src="../static/icon/myPage/右箭头.png"></image>
                     </div>
@@ -40,15 +40,14 @@
                         <div class="grade">
                             <div class="theGrade userGrades">
                                 <image src="../static//Picture_material/gift.png"></image>
-                                <span v-if="level.level">LV{{ level.level }}</span>
-                                <span v-else>LV0</span>
+                                <span>LV{{ user.level }}</span>
                             </div>
                             <div class="progressBar">
                                 <slider class="slider" min="0" max="100" :value="sliderProgress" activeColor="#D3AB58" block-size="12"></slider>
                             </div>
                             <div class="nextGrade userGrades">
                                 <image src="../static//Picture_material/gift.png"></image>
-                                <span>LV{{level.level+1}}</span>
+                                <span>LV{{parseInt(user.level)+1}}</span>
                             </div>
                         </div>
                         <div class="strategy">
@@ -108,29 +107,20 @@ export default {
             haveWork:true,
             haveGift:false,
             user:{
-                signature:'',
+                // signature:'',
                 effect:'0',
+                level:0,
             },
-            userInfo:{
-                // 用户信息默认初始数据
-                uid:'',
-                nickname:'未登录',
-                level:'1',  //等级
-                avatarUrl:'', //头像
-                follows:'0', //关注
-                followeds:'0', //粉丝
-            },
-            level:{}
+            userInfo:{}
+            
         }
     },
-    onLoad(){
-        let userInfo = wx.getStorageSync('userInfo')
-        this.level = wx.getStorageSync('level')
-        console.log(this.level);
-        if(userInfo) {
-            this.userInfo = JSON.parse(userInfo)
-            this._userDetail(this.userInfo.userId)
-        }
+    onLoad(option){
+        this.user.level = option.level
+        this.userInfo = JSON.parse(option.userInfo)
+    },
+    onShow(){
+        this.userInfo = wx.getStorageSync('userDetail')
     },
     methods:{
         changePath(path){
@@ -138,6 +128,9 @@ export default {
         },
         backPath(path){
             wx.navigateBack({url:path})
+        },
+        editInformation(){
+            wx.navigateTo({url:'./updateUserInfo/updateUserInfo?userinfo='+JSON.stringify(this.userInfo)})
         },
         lookWork(){
             this.haveWork=true
@@ -147,17 +140,23 @@ export default {
             this.haveWork=false
             this.haveGift=true
         },
-        _userDetail(id){
+        /* _userDetail(id){
             userDetail(id).then(res => {
                 console.log('这是用户详情',res);
                 this.user.signature = res.profile.signature
                 this.user.effect = (res.listenSongs/150).toFixed(2)
             })
-        }
+        } */
     },
     computed:{
         sliderProgress(){
-            return Math.round(this.level.progress*100)
+            let userDetail = wx.getStorageSync('userDetail');
+            return (userDetail.growthValue%1000)/10
+            // return Math.round(this.level.progress*100)
+        },
+        userEffect(){
+            let userDetail = wx.getStorageSync('userDetail');
+            return ((userDetail.growthValue/999).toFixed(2))
         }
     }
 }
