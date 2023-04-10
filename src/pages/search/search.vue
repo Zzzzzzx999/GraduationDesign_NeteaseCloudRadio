@@ -90,11 +90,17 @@ export default {
         },
         input(e) {
             let value = e.detail.value
+            let time = null
             if(value) {
-                searchSuggest(value).then(res => {
-                    this.searchSuggest = res.result.allMatch
-                    this.show = '1'
-                })
+                if (time !== null) {
+                    clearTimeout(time)                    
+                }
+                time = setTimeout(() => {
+                    searchSuggest(value).then(res => {
+                        this.searchSuggest = res.result.allMatch
+                    })
+                }, 1000);
+                this.show = '1'
             } else {
                 this.show = '0'
             }

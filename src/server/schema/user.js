@@ -15,8 +15,13 @@ const email = joi.string().required()
     data:image/png;base 64,VE9PTUFOWVNFQ1JFVFM
  */
 const user_pic = joi.string().required()
-// const avatar = joi.string().dataUri().required()
+const avatar2 = joi.string().dataUri().required()
 const avatar = joi.string().required()
+const growthValue = joi.number()
+const works = joi.number()
+const follows = joi.number()
+const followeds = joi.number()
+const giftsReceived = joi.number()
 const signature = joi.string()
 
 
@@ -27,6 +32,26 @@ exports.reg_login_schema = {
         password,
     }
 }
+exports.reg_reguser_schema = {
+    body:{
+        username,
+        password,
+        user_pic:avatar2,
+        nickname,
+        email,
+        growthValue,
+        works,
+        follows,
+        followeds,
+        giftsReceived,
+        signature,
+    }
+}
+/* exports.delete_user_schema = {
+    body:{
+        id
+    }
+} */
 exports.update_userinfo_schema = {
     body:{
         id,
@@ -47,6 +72,23 @@ exports.update_password_schema = {
 }
 exports.update_avatar_schema = {
     body:{
-        avatar
+        avatar,
+        id
+    }
+}
+
+
+// 定义验证注册和登录表单数据的规则对象
+exports.reg_adminLogin_schema = {
+    body:{
+        username,
+        password,
+    }
+}
+exports.update_admininfo_schema = {
+    body:{
+        id,
+        name:nickname,
+        admin_pic:user_pic,
     }
 }

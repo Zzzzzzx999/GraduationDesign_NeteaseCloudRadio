@@ -76,7 +76,21 @@ import {getDetail,getProgram} from "./api/djprogram";
 				console.log('ididiididiidid',id);
 				return id
 			},
-
+			getImageSrc(base64String){
+				// 将 base64 编码字符串转换为二进制数据
+				const byteString = atob(base64String.split(',')[1]);
+				const arrayBuffer = new ArrayBuffer(byteString.length);
+				const uint8Array = new Uint8Array(arrayBuffer);
+				for (let i = 0; i < byteString.length; i++) {
+					uint8Array[i] = byteString.charCodeAt(i);
+				}
+				// 创建 Blob 对象
+				const blob = new Blob([uint8Array], { type: 'image/png' });
+				// 使用 URL.createObjectURL() 方法生成图片的访问地址
+				const imageUrl = URL.createObjectURL(blob);
+				// 返回图片的访问地址
+				return imageUrl;
+			},
 			goPlayPage(rid){
 				getProgram(rid).then(res=>{
 					console.log('节目详情',res)

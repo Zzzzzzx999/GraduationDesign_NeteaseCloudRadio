@@ -125,9 +125,27 @@ export default {
     onChooseAvatar(e) {
       console.log(e.detail);
       this.user_pic = e.detail.avatarUrl;
+      this.convertFileToBase64(this.user_pic).then(data=>{
+        this.user_pic = data
+      });
     },
     formSubmit(e) {
       console.log("昵称：", e.detail.value.nickname);
+    },
+    convertFileToBase64(filePath) {
+      return new Promise((resolve, reject) => {
+        wx.getFileSystemManager().readFile({
+          filePath: filePath,
+          encoding: 'base64',
+          success: (res) => {
+            const base64String = `data:image/png;base64,${res.data}`;
+            resolve(base64String);
+          },
+          fail: (error) => {
+            reject(error);
+          },
+        });
+      });
     },
   },
   mounted() {

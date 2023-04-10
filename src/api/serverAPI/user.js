@@ -6,7 +6,16 @@ export function reguser(params) {
     method: 'post',
     data:{
       username:params.username,
-      password:params.password
+      password:params.password,
+      user_pic:params.user_pic,
+      nickname:params.nickname,
+      email:params.email,
+      growthValue:params.growthValue,
+      works:params.works,
+      follows:params.follows,
+      followed:params.followed,
+      giftsReceived:params.giftsReceived,
+      signature:params.signature,
     }
   })
 }

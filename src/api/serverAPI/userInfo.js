@@ -33,3 +33,32 @@ export function getBanner(params) {
     }
   })
 }
+// upLoadFile
+export function upLoadFile(params) {
+  return request({
+    url: '/my/upload/add',
+    method: 'post',
+    body:params
+  })
+}
+// 获取收藏电台id
+export function getCollects(id) {
+  return request({
+    url: '/my/collect',
+    method: 'get',
+    data:{
+      id
+    }
+  })
+}
+// 更新收藏电台id
+export function UpdateCollects(params) {
+  return request({
+    url: '/my/updateCollect',
+    method: 'post',
+    data:{
+      collect: params.collect,
+      id: params.id,
+    }
+  })
+}

@@ -21,11 +21,11 @@
 		},
 		created() {
 			this._getCatelistDJ()
+
 		},
 		methods: {
 			_getCatelistDJ() {
 				getCatelistDJ().then(res => {
-					console.log('resres',res);
 					// this.navList = res.tags.slice(0, 9),
 					this.navList = res.categories
 					this.navId = res.categories[0].id

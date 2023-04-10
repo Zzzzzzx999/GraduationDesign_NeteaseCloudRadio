@@ -8,7 +8,9 @@
         open-type="chooseAvatar"
         @chooseavatar="onChooseAvatar"
       >
-        <image class="avatar" :src="userInfo.user_pic"></image>
+        <image id="file-input" class="avatar" :src="userInfo.user_pic"></image>
+        <!-- <image class="avatar" src="src/static/uploads/image30.png"></image> -->
+        <!-- <image class="avatar" src="../../static/uploads/image30.png"></image> -->
       </button>
       <view class="input-content">
         <view class="input-item">
@@ -36,9 +38,9 @@
 </template>
 
 <script>
-import { object } from '@dcloudio/vue-cli-plugin-uni/packages/postcss/tags';
 const defaultuser_pic = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
-import { updateUserinfo } from "../../api/serverAPI/userInfo";
+import { updateUserinfo,upLoadFile } from "../../api/serverAPI/userInfo";
+import FormData from '../../formdata'
 export default {
   data() {
     return {
@@ -79,7 +81,7 @@ export default {
         let params = {};
         params = {
           id: userId,
-          user_pic,
+          user_pic:user_pic,
           nickname,
           email,
           signature
@@ -137,11 +139,32 @@ export default {
       }
     },
     onChooseAvatar(e) {
-      this.userInfo.user_pic = e.detail.user_pic;
+      console.log('e',e);
+      this.userInfo.user_pic = e.detail.avatarUrl;
+      console.log(this.userInfo.user_pic);
+      this.convertFileToBase64(this.userInfo.user_pic).then(data=>{
+        console.log('data',data);
+        this.userInfo.user_pic = data
+      });
     },
     formSubmit(e) {
       console.log("昵称：", e.detail.value.nickname);
     },
+    convertFileToBase64(filePath) {
+      return new Promise((resolve, reject) => {
+        wx.getFileSystemManager().readFile({
+          filePath: filePath,
+          encoding: 'base64',
+          success: (res) => {
+            const base64String = `data:image/png;base64,${res.data}`;
+            resolve(base64String);
+          },
+          fail: (error) => {
+            reject(error);
+          },
+        });
+      });
+    }
   },
   onLoad(option) {
       console.log(option);

@@ -22,7 +22,7 @@
 	    <button class="confirm-btn" @click="reguser">注册</button>
 	  </view>
 	  <view class="register-section">
-		<div class="inline-block">游客登陆</div>
+		<!-- <div class="inline-block">游客登陆</div> -->
 		<div class="inline-block" @click="goLogin">返回登陆页面</div>
 	  </view>
 	</view>

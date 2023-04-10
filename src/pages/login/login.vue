@@ -16,18 +16,19 @@
 	      </view>
 	      <view class="input-item">
 	        <text class="tit">密码</text>
-	        <input v-model="pwd" type="password" placeholder="请输入密码"/>
+	        <input v-model="pwd" :type="open?'text':'password'" placeholder="请输入密码"/>
+			<image id="password" :src="open?'../../static/icon/eye.png':'../../static/icon/eye-off.png'" @click="open=!open"></image>
 	      </view>
 	    </view>
 	    <button class="confirm-btn" @click="login">登录</button>
-	    <view class="forget-section" @click="changeLoginType">
+	    <!-- <view class="forget-section" @click="changeLoginType">
 	      {{change?'切换手机密码登陆':'切换用户名登录'}}
-	    </view>
+	    </view> -->
 	  </view>
 	  <view class="register-section">
 	    还没有账号?
-	    <div class="inline-block">游客登陆</div>
 		<div class="inline-block" @click="goReguser">马上注册</div>
+	    <!-- <div class="inline-block">游客登陆</div> -->
 		<!-- <view>
 			<text>游客登陆</text>
 		</view> -->
@@ -36,6 +37,7 @@
 </template>
 
 <script>
+	const app = getApp()
 	import {logins,visitorLogin} from '../../api/home'
 	import {login} from '../../api/serverAPI/user'
 	export default {
@@ -45,14 +47,15 @@
 				pwd: '',
 				username: '',
 				change: true,
+				open:false,
 			}
 		},
 		methods: {
-			changeLoginType() {
+			/* changeLoginType() {
 				this.change = !this.change
 				this.username = ''
 				this.pwd = ''
-			},
+			}, */
 			checkPwd(){
 				let {pwd,username,phone} = this
 				let params = {}
@@ -84,6 +87,9 @@
 								icon: 'none'
 							})
 						} else if(res.status === 0){
+							// console.log('@1',res.profile.user_pic);
+							// res.profile.user_pic = app.getImageSrc(res.profile.user_pic)
+							// console.log('@2',res.profile.user_pic);
 							wx.setStorage({
 								data: res.profile,
 								key: 'userDetail',
@@ -105,8 +111,6 @@
 									icon: 'none'
 								})
 							}
-							
-							
 						}
 					})
 				}
@@ -202,8 +206,17 @@
   height: 120rpx;
   border-radius: 4px;
   margin-bottom: 50rpx;
-
+  position: relative;
 }
+
+#password{
+	position: absolute;
+	right: 25rpx;
+	width: 50rpx;
+	height: 50rpx;
+}
+
+
 
 .input-item:last-child{
   margin-bottom: 0;
@@ -218,7 +231,7 @@
   height: 60rpx;
   font-size: 30rpx;
   color: #303133;
-  width: 100%;
+  width: 85%;
 }
 .confirm-btn{
   width: 630rpx!important;

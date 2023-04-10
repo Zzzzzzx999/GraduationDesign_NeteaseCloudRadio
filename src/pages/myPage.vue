@@ -117,7 +117,8 @@ export default {
     },
     onLoad(option){
         this.user.level = option.level
-        this.userInfo = JSON.parse(option.userInfo)
+        console.log('option',option);
+        // this.userInfo = JSON.parse(option.userInfo)
     },
     onShow(){
         this.userInfo = wx.getStorageSync('userDetail')

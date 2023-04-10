@@ -111,4 +111,12 @@ export function getRecommendTypeDJ(type) {
   })
 }
 
+// 电台 - 订阅列表
+// export function  getSubscriptionList () {
+//   return request({
+//     url: '/dj/detail',
+//     rid: '45448'
+//   })
+// }
+
 

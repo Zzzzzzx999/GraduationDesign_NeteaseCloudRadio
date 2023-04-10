@@ -202,8 +202,19 @@ export default {
       wx.redirectTo({url:path})
     },
     toLogin() {
-      wx.reLaunch({
-        url: './login/login',
+      wx.showModal({
+        title: '提示',
+        content: '确定退出登录吗？',
+        success (res) {
+          if (res.confirm) {
+            console.log('用户点击确定')
+            wx.reLaunch({
+              url: './login/login',
+            })
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
       })
     },
     goPlayer(){

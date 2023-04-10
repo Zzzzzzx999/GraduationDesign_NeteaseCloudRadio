@@ -34,7 +34,6 @@
 
 <script>
 const app = getApp()
-import moment from 'moment'
 import {getSongUrl,getSongDetail} from "../api/songs"
 export default {
     name:'player',
@@ -224,6 +223,7 @@ export default {
         box-sizing: border-box;
         display: flex;
         align-items: center;
+        position: relative;
         .radioAvatar{
             image{
                 width: 75rpx;
