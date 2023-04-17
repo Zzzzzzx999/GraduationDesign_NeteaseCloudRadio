@@ -29,6 +29,9 @@
         <view class="progressBar" @click.stop>
             <slider class="slider" max="100" :value="progress" activeColor="#D3AB58" block-size="12" disabled></slider>
         </view>
+        <!-- <div class="progress">
+            <span style="width: 100%;"><span>100%</span></span>
+        </div> -->
     </view>
 </template>
 
@@ -85,6 +88,7 @@ export default {
             }
         },
         _playListSongInfo(id){
+            console.log(';;;',id)
             if (app.globalData.playList) {
                 this.playListSongInfo = app.globalData.playList.find(item => item.id == id)
                 this.timeUpdate()

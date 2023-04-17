@@ -111,50 +111,19 @@
       </view>
     </view>
     <view class="play-list" :class="{ up: isShow, down: !isShow }">
-      <view class="play-list__title"
-        >播放列表<text class="play-count"
-          >({{ playList.length || 0 }})</text
-        ></view
-      >
-      <scroll-view
-        scroll-y
-        class="scroll-list__content"
-        :scroll-top="index * 40"
-      >
-        <view style="height: 900rpx">
-          <block v-for="(item, index) in playList" :key="item.id">
-            <view
-              class="scroll-list__item"
-              :id="index"
-              :data-info="item.id"
-              @tap="chooseSong"
-            >
-              <text class="song-number">{{ index + 1 }}</text>
-              <text
-                v-if="item.id == songInfo.id"
-                class="iconfont icon-zhengzaibofang"
-              ></text>
-              <text
-                class="play-list__songname"
-                :class="{ playing: item.id == songInfo.id }"
-                >{{ item.name || item.songInfo.name
-                }}{{ item.alia[0] ? "(" + item.alia[0] + ")" : "" }}</text
-              >
-              <text
-                class="play-list__singer"
-                :class="{ playing: item.id == songInfo.id }"
-              >
-                -
-                {{
-                  item.ar[0].name ||
-                  item.artists[0].name ||
-                  item.songInfo.ar[0].name
-                }}</text
-              >
-            </view>
-          </block>
-        </view>
-      </scroll-view>
+      <view class="play-list__title">播放列表<text class="play-count">({{ playList.length || 0 }})</text></view>
+      <scroll-view scroll-y class="scroll-list__content" :scroll-top="index * 40">
+	      <view style="height: 900rpx">
+	        <block v-for="(item,index) in playList" :key="item.id">
+	          <view class="scroll-list__item" :id="index" :data-info="item.id" @tap="chooseSong">
+	            <text class="song-number">{{index + 1}}</text>
+	            <text v-if="item.id == songInfo.id" class="iconfont icon-zhengzaibofang"></text>
+	            <text class="play-list__songname" :class="{'playing':item.id == songInfo.id}">{{item.name || item.songInfo.name}}{{item.alia[0]? '('+item.alia[0]+')': ''}}</text>
+	            <text class="play-list__singer" :class="{'playing':item.id == songInfo.id}"> - {{item.ar[0].name || item.artists[0].name || item.songInfo.ar[0].name}}</text>
+	          </view>
+	        </block>
+	      </view>
+	    </scroll-view>
     </view>
   </view>
 </template>
@@ -338,12 +307,14 @@ export default {
           this.playListSongInfo = app.globalData.playList.find(
             (item) => item.id == app.globalData.id
           );
-          console.log("playListSongInfo", this.playListSongInfo);
+          console.log('111',app.globalData.playList);
+          console.log('222',app.globalData.id)
+          console.log("playListSongInfo123", this.playListSongInfo);
         } else if (this.pid) {
           this.playListSongInfo = app.globalData.playList.find(
             (item) => item.id == this.pid
           );
-          console.log("playListSongInfo", this.playListSongInfo);
+          console.log("playListSongInfo123", this.playListSongInfo);
         }
       }
     },
@@ -970,6 +941,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* display: flex; */
 }
 .play-list__singer {
   font-size: 28rpx;

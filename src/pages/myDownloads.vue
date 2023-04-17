@@ -9,28 +9,76 @@
                     <span>下载中</span>
                 </div>
             </div>
-            <div class="downLoadedContent downContent" v-if="downloaded">
-                <div class="notContent">
+            <div class="downLoadedContent" :class="downloadedArr.length == 0?'downContent':''" v-if="downloaded">
+                <div v-if="downloadedArr.length == 0" class="notContent">
                     <image src="../static/icon/下载管理实心.png"></image>
                 </div>
-                <div class="content">
+                <div v-if="downloadedArr.length == 0" class="content">
                     <span>暂无已下载节目</span>
+                </div>
+                <div v-else class="programs" v-for="(item,index) in downloadedArr" :key="item.id" :data-id="item.id" :data-index="index" @tap.stop="goPlayPage">
+                    <div class="programLeft">
+                        <image mode="aspectFill" :src="item.program.radio.picUrl"></image>
+                    </div>
+                    <div class="programRight">
+                        <div class="programTitle">
+                            <div class="boutique">
+                                <span id="Title">{{item.program.radio.category}}</span>
+                                <span id="Name">{{item.program.radio.name}}</span>
+                            </div>
+                        </div>
+                        <div class="programContent">
+                            <span>夜听，让更多的家庭越来越幸福。微信同步收听，请关注公众号：夜听晚上听夜听</span>
+                        </div>
+                        <div class="programDetail">
+                            <span>播放{{item.program.listenerCount/10000}}万</span>
+                            <span id="separate">|</span>
+                            <span>{{item.program.dj.nickname}}</span>
+                        </div>
+                    </div>
+                    <div class="goDown" @click.stop="unloadThis(item.id)">
+                        <image src="../static/icon/删除.png"></image>
+                    </div>
                 </div>
             </div>
             <div class="downLoadingContent downContent" v-if="!downloaded">
-                <div class="notContent">
+                <div class="notContent" v-if="downingArr.length == 0">
                     <image src="../static/icon/下载管理实心.png"></image>
                 </div>
-                <div class="content">
+                <div class="content" v-if="downingArr.length == 0">
                     <span>暂无下载目录</span>
+                </div>
+                <div v-else class="programs" v-for="(item,index) in downingArr" :key="item.id" :data-id="item.id" :data-index="index" @tap.stop="goPlayPage">
+                    <div class="programLeft">
+                        <image mode="aspectFill" :src="item.program.radio.picUrl"></image>
+                    </div>
+                    <div class="programRight">
+                        <div class="programTitle">
+                            <div class="boutique">
+                                <span id="Title">{{item.program.radio.category}}</span>
+                                <span id="Name">{{item.program.radio.name}}</span>
+                            </div>
+                        </div>
+                        <div class="programContent">
+                            <span>夜听，让更多的家庭越来越幸福。微信同步收听，请关注公众号：夜听晚上听夜听</span>
+                        </div>
+                        <div class="programDetail">
+                            <span>播放{{item.program.listenerCount/10000}}万</span>
+                            <span id="separate">|</span>
+                            <span>{{item.program.dj.nickname}}</span>
+                        </div>
+                    </div>
+                    <div class="goDown" @click.stop="canceLoadThis(item.id)">
+                        <image src="../static/icon/删除.png"></image>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="popularRecommendations">
+        <div class="popularRecommendations" v-if="downloaded && hotDT.length !== 0">
             <div class="title">
                 <span>热门专辑推荐</span>
             </div>
-            <div class="programs">
+            <!-- <div class="programs">
                 <div class="programLeft">
                     <image mode="aspectFill" src="https://img1.baidu.com/it/u=601131707,207544092&fm=253&fmt=auto&app=138&f=JPEG?w=480&h=270"></image>
                 </div>
@@ -105,6 +153,30 @@
                 <div class="goDown">
                     <image src="../static/icon/下载.png"></image>
                 </div>
+            </div> -->
+            <div class="programs" v-for="(item,index) in hotDT" :key="item.id" :data-id="item.id" :data-index="index" @tap.stop="goPlayPage">
+                <div class="programLeft">
+                    <image mode="aspectFill" :src="item.program.radio.picUrl"></image>
+                </div>
+                <div class="programRight">
+                    <div class="programTitle">
+                        <div class="boutique">
+                            <span id="Title">{{item.program.radio.category}}</span>
+                            <span id="Name">{{item.program.radio.name}}</span>
+                        </div>
+                    </div>
+                    <div class="programContent">
+                        <span>夜听，让更多的家庭越来越幸福。微信同步收听，请关注公众号：夜听晚上听夜听</span>
+                    </div>
+                    <div class="programDetail">
+                        <span>播放{{item.program.listenerCount/10000}}万</span>
+                        <span id="separate">|</span>
+                        <span>{{item.program.dj.nickname}}</span>
+                    </div>
+                </div>
+                <div class="goDown" @click.stop="downThis(item.id)">
+                    <image src="../static/icon/下载.png"></image>
+                </div>
             </div>
         </div>
         <!-- <player></player> -->
@@ -113,22 +185,66 @@
 
 <script>
 import player from "../components/common-player.vue";
+import {getRecommendedStations,getProgram} from "../api/djprogram";
+var downLoading
 export default {
     name:"myDownloads",
     components:{player},
     data() {
         return {
+            hotDT:[], // 热门推荐
+            downloadedArr:[], //已下载
+            downingArr:[],  //下载中
             downloaded:true
         }
     },
+    onLoad(){
+        this._getRecommendedStations()
+    },
     methods:{
+        _getRecommendedStations(){
+            getRecommendedStations().then(res=>{
+                console.log('推荐电台列表',res);
+                this.hotDT = res.result
+                console.log('this.hotDT',this.hotDT);
+            })
+        },
         changeLoading(){
             this.downloaded=true
         },
         changeLoaded(){
             this.downloaded=false
         },
-    }
+        downThis(id){
+            console.log('ididi',id)
+            let downloadedItem = this.hotDT.filter(obj => obj.id === id)
+            this.downingArr.push(downloadedItem[0])
+            downLoading = setTimeout(() => {
+                this.downingArr.shift(downloadedItem[0])
+                this.downloadedArr.push(downloadedItem[0])
+            }, 5000)
+            this.hotDT = this.hotDT.filter(item => item.id !== id)
+            console.log('this.hotDT',this.hotDT)
+            console.log('this.downloadedArr',this.downloadedArr)
+            this.$forceUpdate()
+        },
+        unloadThis(id){
+            let hotDTItem = this.downloadedArr.filter(obj => obj.id === id)
+            this.hotDT.push(hotDTItem[0])
+            this.downloadedArr = this.downloadedArr.filter(item => item.id !== id)
+            this.$forceUpdate()
+        },
+        canceLoadThis(id){
+            clearTimeout(downLoading)
+            let downloadedItem = this.downingArr.filter(obj => obj.id === id)
+            this.hotDT.push(downloadedItem[0])
+            this.downingArr = this.downingArr.filter(item => item.id !== id)
+            this.$forceUpdate()
+        },
+        goPlayPage() {
+            
+        },
+    },
 }
 </script>
 
@@ -140,6 +256,7 @@ export default {
     .down{
         display: flex;
         flex-flow: column nowrap;
+        height: auto;
         .downTitle{
             width: 100vw;
             height: 80rpx;
@@ -166,7 +283,7 @@ export default {
             align-items: center;
             justify-content: center;
             flex-flow: column nowrap;
-            height: 550rpx;
+            min-height: 550rpx;
             image{
                 width: 130rpx;
                 height: 130rpx;

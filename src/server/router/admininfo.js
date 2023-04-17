@@ -12,7 +12,7 @@ const {update_admininfo_schema,update_password_schema,update_avatar_schema} = re
 // 获取用户信息的路由
 router.get('/adminInfo',adminInfo_handler.getUserInfo)
 // 更新用户信息的路由
-router.post('/adminInfo',expressJoi(update_admininfo_schema),adminInfo_handler.updateUserInfo)
+router.post('/adminInfo',expressJoi(update_admininfo_schema),adminInfo_handler.updateAdminInfo)
 // 更新密码的路由
 router.post('/updateAdminPwd',expressJoi(update_password_schema),adminInfo_handler.updatePassword)
 // 更新头像的路由

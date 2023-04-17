@@ -55,19 +55,28 @@ exports.reg_reguser_schema = {
 exports.update_userinfo_schema = {
     body:{
         id,
+        username,
         nickname,
         email,
         user_pic,
-        signature
+        signature,
+        growthValue,
+        works,
+        follows,
+        followeds,
+        giftsReceived,
+
     }
 }
 exports.update_password_schema = {
     body:{
-        oldPwd:password,
+        id,
+        old_pwd:password,
         // 1. joi.ref('oldPwd')表示 newPwd 的值必须和 oldPwd 的值保持一致
         // 2. joi.not(joi.ref('oldPwd')) 表示 newPwd 的值不能等于 oldPwd 的值
         // 3. .concat用于合并 joi.not(joi.ref('oldPwd'))和 password这两条验证规则
-        newPwd:joi.not(joi.ref('oldPwd')).concat(password),
+        new_pwd:joi.not(joi.ref('oldPwd')).concat(password),
+        re_pwd:joi.not(joi.ref('oldPwd')).concat(password)
     }
 }
 exports.update_avatar_schema = {
@@ -89,6 +98,6 @@ exports.update_admininfo_schema = {
     body:{
         id,
         name:nickname,
-        admin_pic:user_pic,
+        email,
     }
 }

@@ -171,16 +171,13 @@
     <div class="logOut">
       <span @click="toLogin">退出登录</span>
     </div>
-    <player class="audio" v-if="showAudio"></player>
   </div>
 </template>
 
 <script>
 const app = getApp()
-import player from "../components/common-player.vue";
 export default {
   name:"setting",
-  components:{player},
   data() {
     return {
       property: 'value',

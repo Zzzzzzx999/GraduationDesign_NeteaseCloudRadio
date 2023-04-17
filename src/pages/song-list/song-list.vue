@@ -124,13 +124,14 @@
 			},
 			chooseSong(e) {
 				let {id,index} = e.currentTarget.dataset
+        console.log('idid',id)
+        console.log('index',index)
 				app.globalData.index = index
 				app.globalData.id = id
 				app.addSong(id)
 				app.playList(this.tracks)
 				uni.navigateTo({
-					url: '/pages/song-play/song-play?pid='+ this.id,
-					// url: '../playPage?pid='+ this.id,
+					url: '/pages/song-play/song-play?pid='+ id,
 				})
 			},
 		},

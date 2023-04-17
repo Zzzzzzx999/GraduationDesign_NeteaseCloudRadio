@@ -40,7 +40,7 @@ const userinfoRouter = require('./router/userinfo')
 app.use('/my',userinfoRouter)
 // 导入并使用电台分类
 const stationCateRouter = require('./router/stationcate')
-app.use('/my/station',stationCateRouter)
+app.use('/my/stationCate',stationCateRouter)
 // 导入并使用电台的路由模块
 const stationRouter = require('./router/station')
 app.use('/my/station',stationRouter)
@@ -66,10 +66,14 @@ app.use((err,req,res,next)=>{
     // 身份认证失败后的错误
     if(err.name === 'UnauthorizedError') return res.cc('身份认证失败！')
     // 未知的错误
-    res.cc(err)
+    // res.cc(err)
+    res.send({
+        status:1,
+        message:err instanceof Error?err.message:err
+    })
 })
 
 // 调用 app.listen 方法，指定端口号并启动web服务器
 app.listen(3000,()=>{
-    console.log('Express server running at http://127.0.0.1:3000');
+    console.log('Express server running at http://192.168.1.7:3000');
 })
