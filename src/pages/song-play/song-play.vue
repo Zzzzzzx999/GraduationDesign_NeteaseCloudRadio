@@ -395,7 +395,7 @@ export default {
         if (musicSrc) {
           this.musicSrc = musicSrc;
           app.globalData.backgroundAudioManager =
-            uni.getBackgroundAudioManager();
+          uni.getBackgroundAudioManager();
           // app.globalData.backgroundAudioManager = uni.createInnerAudioContext()
           app.globalData.backgroundAudioManager.autoplay = true;
           app.globalData.backgroundAudioManager.coverImgUrl =
@@ -467,8 +467,8 @@ export default {
     changeSong(type) {
       clearTimeout(time);
       getSongDetail(app.getSong(type)).then((res) => {
-        console.log("res@@", res);
-        this.getSongInfo(res.songs[0]);
+        console.log("res@@", res)
+        this.getSongInfo(res.songs[0])
       });
       this._playListSongInfo();
       // this.timeUpdate()

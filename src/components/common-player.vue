@@ -20,18 +20,11 @@
             <view class="broadcast" @click.stop>
                 <image mode="aspectFill" src="../static/icon/24gf-nextCircle.png" @click.stop="nextSong"></image>
             </view>
-            <!-- <view class="text" @click.stop>
-                <image mode="aspectFill" @click="IsText=!IsText" :src="IsText?'../static/icon/文件.png':'../static/icon/homeIcon/文件.png'"></image>
-            </view> -->
-            <!-- <view class="iconfont icon-xiayiqu101 text" @click.stop="nextSong"/> -->
         </view>
         <!-- 进度条 -->
         <view class="progressBar" @click.stop>
             <slider class="slider" max="100" :value="progress" activeColor="#D3AB58" block-size="12" disabled></slider>
         </view>
-        <!-- <div class="progress">
-            <span style="width: 100%;"><span>100%</span></span>
-        </div> -->
     </view>
 </template>
 
@@ -59,6 +52,7 @@ export default {
             isPlay: false,
             pid: '',
             active: '',
+            musicSrc: '',
         };
     },
     methods: {
@@ -87,12 +81,21 @@ export default {
                 this.indexDJ = this.playListDJ.findIndex((item) => item.id == app.globalData.idDJ);
             }
         },
-        _playListSongInfo(id){
-            console.log(';;;',id)
+        _playListSongInfo(){
             if (app.globalData.playList) {
-                this.playListSongInfo = app.globalData.playList.find(item => item.id == id)
-                this.timeUpdate()
-                console.log('playListSongInfo1',this.playListSongInfo);
+                if (app.globalData.id) {
+                    this.playListSongInfo = app.globalData.playList.find(
+                        (item) => item.id == app.globalData.id
+                    );
+                    console.log('111',app.globalData.playList);
+                    console.log('222',app.globalData.id)
+                    console.log("playListSongInfo123", this.playListSongInfo);
+                    } else if (this.pid) {
+                    this.playListSongInfo = app.globalData.playList.find(
+                        (item) => item.id == this.pid
+                    );
+                    console.log("playListSongInfo123", this.playListSongInfo);
+                }
             }
         },
         play() {
@@ -107,13 +110,38 @@ export default {
             let id = app.getSong('next')
             getSongDetail(id).then(res => {
                 this.songInfo = res.songs[0]
-                getSongUrl(id).then(result => {
-                    console.log('result',result);
-                    app.globalData.backgroundAudioManager = uni.getBackgroundAudioManager()
-                    app.globalData.backgroundAudioManager.src = result.data[0].url
-                    app.globalData.backgroundAudioManager.title = this.songInfo.name
-                })
+                this.getSongInfo(res.songs[0])
             })
+            this._playListSongInfo();
+        },
+        async getSongInfo(info) {
+            await this._getUrl(info.id);
+            this._playListSongInfo();
+        },
+        _getUrl(id) {
+            getSongUrl(id).then((res) => {
+                console.log("_getUrl", res);
+                const musicSrc = res.data[0].url;
+                if (musicSrc) {
+                    this.musicSrc = musicSrc;
+                    app.globalData.backgroundAudioManager = uni.getBackgroundAudioManager();
+                    // app.globalData.backgroundAudioManager = uni.createInnerAudioContext()
+                    app.globalData.backgroundAudioManager.autoplay = true;
+                    app.globalData.backgroundAudioManager.coverImgUrl =
+                        this.songInfo.al && this.songInfo.al.pic == 0
+                        ? this.playListDJ[this.indexDJ].picUrl
+                        : this.songInfo.al && this.songInfo.al.picUrl;
+                    app.globalData.backgroundAudioManager.title =
+                        this.songInfo.name || this.playListSongInfo.name || "暂无";
+                    app.globalData.backgroundAudioManager.src = this.musicSrc;
+                    app.globalData.backgroundAudioManager.play();
+                    } else {
+                    this.musicSrc = "";
+                    time = setTimeout(() => {
+                        this.changeSong("next");
+                    }, 3000);
+                }
+            });
         },
         goPlayer(){
             app.globalData.isSame = true
